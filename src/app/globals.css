@@ -1,26 +1,229 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* CRITICAL: Tailwind v4 uses media-query dark mode by default.
+   This enables class-based dark mode toggling via .dark on <html>. */
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* ── Revolut Design System Tokens (from Design.md) ── */
+
+  /* Brand / Interactive */
+  --color-brand: #494fdf;
+  --color-brand-action: #4f55f1;
+  --color-brand-link: #376cd5;
+
+  /* Semantic */
+  --color-danger: #e23b4a;
+  --color-deep-pink: #e61e49;
+  --color-warning: #ec7e00;
+  --color-success: #00a87e;
+  --color-attention: #b09000;
+  --color-info: #007bc2;
+  --color-light-green: #428619;
+  --color-brown: #936d62;
+
+  /* Typography — Design.md: Aeonik Pro for display, Inter for body */
+  --font-display: "Aeonik Pro", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  /* Border Radius Scale — Design.md §5 */
+  --radius-pill: 9999px;
+  --radius-card: 20px;
+  --radius-standard: 12px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* ── CSS Variable Theming ── */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #191c1f;
+    --surface: #ffffff;
+    --surface-alt: #f4f4f4;
+    --border: #c9c9cd;
+    --muted: #8d969e;
+    --mid-slate: #505a63;
+  }
+
+  .dark {
+    --background: #191c1f;
+    --foreground: #ffffff;
+    --surface: #232628;
+    --surface-alt: rgba(244, 244, 244, 0.06);
+    --border: #44474a;
+    --muted: #828488;
+    --mid-slate: #a0a4a8;
   }
 }
 
-body {
-  background: var(--background);
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Design.md §3: Body text uses +0.24px letter-spacing for airy reading */
+    letter-spacing: 0.015em;
+    line-height: 1.5;
+  }
+}
+
+/* ── Display Typography — Design.md §3 ── */
+/* "Weight 500 as display default — creates authority through size and tracking, not weight" */
+.heading-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+}
+
+.heading-section {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.21;
+}
+
+.heading-card {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.19;
+}
+
+/* ── Button Utilities — Design.md §4 ── */
+/* "Every button uses 9999px radius with generous padding (14px 32px)" */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: normal;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  outline: none;
+  border: 2px solid transparent;
+}
+
+.btn-pill:focus-visible {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px #494fdf;
+}
+
+/* Primary Dark Pill */
+.btn-primary {
+  background: #191c1f;
+  color: #ffffff;
+}
+.btn-primary:hover {
+  opacity: 0.85;
+}
+
+/* Dark mode inverse */
+:is(.dark *) .btn-primary {
+  background: #ffffff;
+  color: #191c1f;
+}
+
+/* Secondary Light Pill */
+.btn-secondary {
+  background: var(--surface-alt);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+.btn-secondary:hover {
+  opacity: 0.85;
+}
+
+/* Outlined Pill */
+.btn-outlined {
+  background: transparent;
+  color: var(--foreground);
+  border-color: var(--foreground);
+}
+.btn-outlined:hover {
+  background: var(--surface-alt);
+}
+
+/* Ghost on Dark */
+.btn-ghost {
+  background: rgba(244, 244, 244, 0.1);
+  color: #f4f4f4;
+  border-color: rgba(244, 244, 244, 0.3);
+}
+.btn-ghost:hover {
+  background: rgba(244, 244, 244, 0.18);
+}
+
+/* Danger Pill */
+.btn-danger {
+  background: #e23b4a;
+  color: #ffffff;
+  border-color: transparent;
+}
+.btn-danger:hover {
+  background: #c93140;
+}
+
+/* ── Card Surfaces — Design.md §4: "No shadows — flat surfaces with color contrast" ── */
+.card-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+/* ── Select / Option Dark Mode Fix ── */
+/* Native select dropdowns don't inherit CSS variables — force them */
+select,
+select option {
+  background-color: var(--surface-alt);
+  color: var(--foreground);
+}
+
+.dark select option {
+  background-color: #232628;
+  color: #ffffff;
+}
+
+/* ── Recharts Tooltip Fix — Kill Square Border ── */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.recharts-tooltip-wrapper:focus {
+  outline: none !important;
+}
+
+/* Active pie sector — no ugly outline */
+.recharts-sector:focus,
+.recharts-sector:active {
+  outline: none !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Selection ── */
+::selection {
+  background: #191c1f;
+  color: #ffffff;
+}
+:is(.dark *) ::selection {
+  background: #ffffff;
+  color: #191c1f;
 }
