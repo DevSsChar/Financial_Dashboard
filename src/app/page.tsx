@@ -1,65 +1,134 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useMemo } from "react";
+import { motion } from "framer-motion";
+import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp } from "lucide-react";
+import { useAppContext } from "@/context/AppContext";
+import { ANIM } from "@/constants/animations";
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import dynamic from "next/dynamic";
+
+// Dynamic imports for charts to avoid SSR issues with Recharts
+const BalanceChart = dynamic(() => import("@/components/dashboard/BalanceChart").then(mod => mod.BalanceChart), { ssr: false, loading: () => <SkeletonLoader type="card" /> });
+const CategoryChart = dynamic(() => import("@/components/dashboard/CategoryChart").then(mod => mod.CategoryChart), { ssr: false, loading: () => <SkeletonLoader type="circle" className="w-[200px] h-[200px] mx-auto" /> });
+const RecentTransactions = dynamic(() => import("@/components/dashboard/RecentTransactions").then(mod => mod.RecentTransactions), { ssr: false, loading: () => <SkeletonLoader count={3} /> });
+
+export default function DashboardPage() {
+  const { state } = useAppContext();
+  const { transactions } = state;
+
+  const { totalIncome, totalExpense, balance } = useMemo(() => {
+    return transactions.reduce(
+      (acc, curr) => {
+        if (curr.type === "income") acc.totalIncome += curr.amount;
+        if (curr.type === "expense") acc.totalExpense += curr.amount;
+        acc.balance = acc.totalIncome - acc.totalExpense;
+        return acc;
+      },
+      { totalIncome: 0, totalExpense: 0, balance: 0 }
+    );
+  }, [transactions]);
+
+  const cards = [
+    {
+      title: "Total Balance",
+      amount: balance,
+      icon: <Wallet className="w-5 h-5" />,
+      color: "#494fdf",
+      trend: "+12.5%",
+    },
+    {
+      title: "Total Income",
+      amount: totalIncome,
+      icon: <ArrowUpRight className="w-5 h-5" />,
+      color: "#00a87e",
+      trend: "+8.3%",
+    },
+    {
+      title: "Total Expense",
+      amount: totalExpense,
+      icon: <ArrowDownRight className="w-5 h-5" />,
+      color: "#e23b4a",
+      trend: "-3.2%",
+    },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <motion.div {...ANIM.page} className="max-w-6xl mx-auto space-y-8">
+      {/* Page Header — Design.md: Section Heading at weight 500, tight tracking */}
+      <header>
+        <h1 className="heading-section text-[2rem]">Dashboard</h1>
+        <p className="text-[var(--muted)] mt-2 text-[15px]">
+          Welcome back — here&apos;s your financial overview.
+        </p>
+      </header>
+
+      {/* Summary Cards — Design.md: 20px radius, no shadows, flat surfaces */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {cards.map((card, i) => (
+          <motion.div
+            key={card.title}
+            {...ANIM.row(i)}
+            className="card-surface p-6 flex flex-col justify-between gap-6 group hover:border-[var(--muted)]/40 transition-colors duration-300"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-[var(--muted)] tracking-wide">{card.title}</span>
+              <div
+                className="w-10 h-10 rounded-[12px] flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                style={{ backgroundColor: `${card.color}12`, color: card.color }}
+              >
+                {card.icon}
+              </div>
+            </div>
+
+            <div>
+              <div className="heading-card text-[1.75rem]">
+                ₹{card.amount.toLocaleString("en-IN")}
+              </div>
+              <div className="flex items-center gap-1.5 mt-2">
+                <TrendingUp className="w-3.5 h-3.5" style={{ color: card.color }} />
+                <span className="text-xs font-medium" style={{ color: card.color }}>
+                  {card.trend}
+                </span>
+                <span className="text-xs text-[var(--muted)]">vs last month</span>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Charts + Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Column */}
+        <div className="lg:col-span-2 space-y-6">
+          <motion.div {...ANIM.row(3)} className="card-surface p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="heading-card text-base">Balance Trend</h2>
+              <span className="text-xs text-[var(--muted)] px-3 py-1.5 rounded-[9999px] bg-[var(--surface-alt)]">Last 30 days</span>
+            </div>
+            <div className="h-[300px] w-full">
+              <BalanceChart transactions={transactions} />
+            </div>
+          </motion.div>
+
+          <motion.div {...ANIM.row(4)} className="card-surface p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="heading-card text-base">Recent Transactions</h2>
+            </div>
+            <RecentTransactions transactions={transactions} />
+          </motion.div>
         </div>
-      </main>
-    </div>
+
+        {/* Side Panel */}
+        <div className="space-y-6">
+          <motion.div {...ANIM.row(5)} className="card-surface p-6">
+            <h2 className="heading-card text-base mb-6">Spending Breakdown</h2>
+            <div className="h-[250px] w-full flex items-center justify-center">
+              <CategoryChart transactions={transactions} type="expense" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
