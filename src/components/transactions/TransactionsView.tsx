@@ -115,7 +115,7 @@ export function TransactionsView() {
           <EmptyState title="No transactions found" description="Try adjusting your filters or search terms." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--surface-alt)]">
                   <th className="px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]">Date</th>

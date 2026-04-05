@@ -64,7 +64,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Summary Cards — Design.md: 20px radius, no shadows, flat surfaces */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {cards.map((card, i) => (
           <motion.div
             key={card.title}

@@ -107,7 +107,7 @@ export default function InsightsPage() {
       </header>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <motion.div {...ANIM.row(0)} className="card-surface p-6">
           <div className="flex items-center gap-2 mb-3">
             <div className="p-2 rounded-[12px] bg-[#494fdf]/8 text-[#494fdf]">

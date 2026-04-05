@@ -16,7 +16,7 @@ export function TransactionFilters({ onExportCSV, onExportJSON }: TransactionFil
 
   return (
     <div className="flex flex-col gap-3 card-surface p-4">
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col xl:flex-row gap-3">
       {/* Search — Design.md: pill inputs */}
       <div className="relative flex-1 min-w-0">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
@@ -30,9 +30,9 @@ export function TransactionFilters({ onExportCSV, onExportJSON }: TransactionFil
       </div>
 
       {/* Dropdowns — explicitly set background/color for mobile dark mode */}
-      <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+      <div className="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-2 w-full xl:w-auto">
         <select
-          className="flex-1 sm:flex-none min-w-[110px] px-4 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-sm font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select"
+          className="flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select"
           value={filters.type}
           onChange={(e) => dispatch({ type: "SET_FILTER", payload: { type: e.target.value as any } })}
         >
@@ -42,7 +42,7 @@ export function TransactionFilters({ onExportCSV, onExportJSON }: TransactionFil
         </select>
 
         <select
-          className="flex-1 sm:flex-none min-w-[130px] px-4 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-sm font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select"
+          className="flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select"
           value={filters.category}
           onChange={(e) => dispatch({ type: "SET_FILTER", payload: { category: e.target.value } })}
         >
@@ -54,24 +54,26 @@ export function TransactionFilters({ onExportCSV, onExportJSON }: TransactionFil
           ))}
         </select>
 
-        <button
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          className={`px-4 py-3 rounded-[9999px] text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-            showAdvanced ? "bg-[#494fdf] text-white" : "bg-[var(--surface-alt)] text-[var(--foreground)] hover:bg-[var(--border)]"
-          }`}
-          title="Toggle Advanced Filters"
-        >
-          <SlidersHorizontal className="w-4 h-4 shrink-0" />
-          <span className="hidden sm:inline">Advanced</span>
-        </button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className={`flex-1 sm:flex-none px-4 py-3 rounded-[9999px] text-[13px] font-medium transition-colors flex items-center justify-center gap-2 ${
+              showAdvanced ? "bg-[#494fdf] text-white" : "bg-[var(--surface-alt)] text-[var(--foreground)] hover:bg-[var(--border)]"
+            }`}
+            title="Toggle Advanced Filters"
+          >
+            <SlidersHorizontal className="w-4 h-4 shrink-0" />
+            <span className="sm:hidden lg:inline">Advanced</span>
+          </button>
 
-        <button
-          onClick={() => dispatch({ type: "RESET_FILTERS" })}
-          className="p-3 bg-[var(--surface-alt)] hover:bg-[var(--border)] rounded-[9999px] transition-colors focus:ring-2 focus:ring-[#494fdf] outline-none flex items-center justify-center shrink-0 text-[var(--muted)] hover:text-[var(--foreground)]"
-          title="Reset Filters"
-        >
-          <X className="w-4 h-4" /> {/* Wait I didn't import X, I will use "Clear" text instead or just keep it simple */}
-        </button>
+          <button
+            onClick={() => dispatch({ type: "RESET_FILTERS" })}
+            className="p-3 w-[44px] h-[44px] bg-[var(--surface-alt)] hover:bg-[var(--border)] rounded-[9999px] transition-colors focus:ring-2 focus:ring-[#494fdf] outline-none flex items-center justify-center shrink-0 text-[var(--muted)] hover:text-[var(--foreground)]"
+            title="Reset Filters"
+          >
+            <X className="w-4 h-4 shrink-0" />
+          </button>
+        </div>
       </div>
       </div>
 
