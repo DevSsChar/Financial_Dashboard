@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Zorvyn Finance Dashboard
 
-## Getting Started
+Zorvyn is a frontend-focused finance dashboard designed to provide users with a clear, intuitive, and responsive interface for tracking financial activity. The application emphasizes visual quality, robust state management without a real backend, and a modern component architecture.
 
-First, run the development server:
+## Overview of Implementation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The dashboard currently features a complete client-side experience:
+- A main dashboard with summary metrics and trend visualizations.
+- A transactions explorer with advanced filtering (type, category) and search capabilities.
+- An insights view for deeper categorizations and monthly visual comparisons.
+- A simulated authentication/role environment, allowing users to toggle between "Viewer" and "Admin" roles, revealing administrative transaction-creation capabilities.
+- A highly polished, responsive design system.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup Instructions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open the application at `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technical Documentation
 
-## Learn More
+To keep the repository organized and maintainable, the technical documentation is divided into specific domains. Please refer to the following documents for deep dives into how Zorvyn is built:
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Design Guidelines and Aesthetic Details](./docs/design.md)
+- [Component Architecture and Technology Stack](./docs/architecture-and-stack.md)
+- [State Management Approach](./docs/state-management.md)
+- [Technical Quality and Responsiveness](./docs/technical-quality.md)

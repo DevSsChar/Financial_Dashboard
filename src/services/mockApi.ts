@@ -7,7 +7,7 @@ const shouldThrowError = () => {
   if (typeof window !== "undefined") {
     const searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get("simulateErrors") === "true") {
-      return Math.random() < 0.2;
+      return true; // 100% chance to simulate failure for testing
     }
   }
   return false;
