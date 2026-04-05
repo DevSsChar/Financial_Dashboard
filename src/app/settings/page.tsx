@@ -21,7 +21,9 @@ import {
   Lock,
   CreditCard,
   Globe,
+  Download,
 } from "lucide-react";
+import { format } from "date-fns";
 
 export default function SettingsPage() {
   const { state, dispatch } = useAppContext();
@@ -53,6 +55,32 @@ export default function SettingsPage() {
     window.localStorage.removeItem("fd_transactions");
     window.localStorage.removeItem("fd_filters");
     addToast("All data has been reset. Reload to re-seed.", "success");
+  };
+
+  const handleExportCSV = () => {
+    if (state.transactions.length === 0) {
+      addToast("No data to export", "error");
+      return;
+    }
+    const headers = ["ID", "Date", "Description", "Category", "Type", "Amount"];
+    const rows = state.transactions.map((tx) => [
+      tx.id,
+      format(new Date(tx.date), "yyyy-MM-dd"),
+      `"${tx.description.replace(/"/g, '""')}"`,
+      tx.category,
+      tx.type,
+      tx.amount.toString(),
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `zorvyn_full_export_${format(new Date(), "yyyy-MM-dd")}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast("Exported all transactions to CSV", "success");
   };
 
   return (
@@ -273,11 +301,11 @@ export default function SettingsPage() {
 
         <div className="border-t border-[var(--border)] pt-4 flex flex-wrap gap-3">
           <button
-            onClick={() => addToast("Export coming soon — stay tuned!", "info")}
-            className="btn-pill btn-secondary text-xs !py-2.5 !px-5"
+            onClick={handleExportCSV}
+            className="btn-pill text-xs !py-2.5 !px-5 bg-[#00a87e]/10 text-[#00a87e] border border-[#00a87e]/20 hover:bg-[#00a87e]/20"
           >
-            <Database className="w-3.5 h-3.5" />
-            Export Data
+            <Download className="w-3.5 h-3.5" />
+            Export CSV
           </button>
           <button
             onClick={() => setShowReset(true)}

@@ -11,6 +11,7 @@ import { format, parseISO } from "date-fns";
 import { Edit2, Trash2 } from "lucide-react";
 import { ANIM } from "@/constants/animations";
 import { Transaction } from "@/data/seedTransactions";
+import { EditTransactionModal } from "./EditTransactionModal";
 
 export function TransactionsView() {
   const { state, dispatch } = useAppContext();
@@ -18,6 +19,7 @@ export function TransactionsView() {
   const isAdmin = role === "admin";
 
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
+  const [editTarget, setEditTarget] = useState<Transaction | null>(null);
   const [toasts, setToasts] = useState<Omit<ToastProps, "onDismiss">[]>([]);
 
   const addToast = useCallback((message: string, type: ToastProps["type"] = "info") => {
@@ -35,6 +37,10 @@ export function TransactionsView() {
         if (filters.search && !t.description.toLowerCase().includes(filters.search.toLowerCase())) return false;
         if (filters.type !== "all" && t.type !== filters.type) return false;
         if (filters.category && t.category !== filters.category) return false;
+        if (filters.amountMin !== "" && t.amount < Number(filters.amountMin)) return false;
+        if (filters.amountMax !== "" && t.amount > Number(filters.amountMax)) return false;
+        if (filters.dateFrom && t.date < filters.dateFrom) return false;
+        if (filters.dateTo && t.date > filters.dateTo) return false;
         return true;
       })
       .sort((a, b) => {
@@ -49,6 +55,36 @@ export function TransactionsView() {
         return 0;
       });
   }, [transactions, filters]);
+
+  const handleExportCSV = useCallback(() => {
+    const headers = ["ID,Date,Description,Amount,Type,Category"];
+    const rows = filtered.map(t => 
+      `${t.id},${t.date},"${t.description.replace(/"/g, '""')}",${t.amount},${t.type},${t.category}`
+    );
+    const csvContent = headers.concat(rows).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `transactions_${format(new Date(), "yyyyMMdd")}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast("Exported to CSV successfully", "success");
+  }, [filtered, addToast]);
+
+  const handleExportJSON = useCallback(() => {
+    const jsonContent = JSON.stringify(filtered, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `transactions_${format(new Date(), "yyyyMMdd")}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast("Exported to JSON successfully", "success");
+  }, [filtered, addToast]);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -72,7 +108,7 @@ export function TransactionsView() {
 
   return (
     <div className="space-y-6">
-      <TransactionFilters />
+      <TransactionFilters onExportCSV={handleExportCSV} onExportJSON={handleExportJSON} />
 
       <div className="card-surface overflow-hidden">
         {filtered.length === 0 ? (
@@ -129,7 +165,7 @@ export function TransactionsView() {
                             <button
                               className="p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#494fdf] hover:bg-[#494fdf]/8 transition-colors"
                               aria-label={`Edit ${t.description}`}
-                              onClick={() => addToast("Edit modal coming soon!", "info")}
+                              onClick={() => setEditTarget(t)}
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
@@ -165,6 +201,14 @@ export function TransactionsView() {
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
         isDestructive
+      />
+
+      <EditTransactionModal
+        isOpen={!!editTarget}
+        transaction={editTarget}
+        onClose={() => setEditTarget(null)}
+        onSuccess={(msg) => addToast(msg, "success")}
+        onError={(msg) => addToast(msg, "error")}
       />
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
