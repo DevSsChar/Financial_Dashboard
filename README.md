@@ -1,6 +1,6 @@
-# Zorvyn Finance Dashboard
+# Financial Dashboard
 
-Zorvyn is a client-side finance dashboard built to demonstrate frontend engineering proficiency across interface design, component architecture, data handling, and user experience. The application runs entirely in the browser with no backend dependency, using mock data and simulated API interactions to replicate a production-grade financial tracking experience.
+This is a client-side finance dashboard built to demonstrate frontend engineering proficiency across interface design, component architecture, data handling, and user experience. The application runs entirely in the browser with no backend dependency, using mock data and simulated API interactions to replicate a production-grade financial tracking experience.
 
 The project prioritizes visual polish, responsive layout engineering, and a maintainable codebase over feature volume. Every design decision, from the color system to the animation timing, follows a deliberate specification documented in the companion design guide.
 
@@ -27,8 +27,8 @@ The project prioritizes visual polish, responsive layout engineering, and a main
 ### Installation
 
 ```bash
-git clone https://github.com/<your-username>/zorvyn.git
-cd zorvyn
+git clone https://github.com/<your-username>/financial-dashboard.git
+cd financial-dashboard
 npm install
 ```
 
@@ -109,7 +109,7 @@ Appending `?simulateErrors=true` to any URL activates deterministic API failure 
 ## Project Structure
 
 ```
-zorvyn/
+financial-dashboard/
   docs/                          # Technical documentation
     architecture-and-stack.md    # Technology stack and component architecture
     design.md                    # Design system specification
