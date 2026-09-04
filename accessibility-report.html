@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AccessibilityGuard — Fix Report scan_1788518699854_3be5c9</title>
+<style>
+  :root {
+    --primary: #86d4d0;
+    --secondary-container: #36ffc4;
+    --error: #ffb4ab;
+    --tertiary: #ffb693;
+    --surface: #131313;
+    --surface-container: #201f1f;
+    --surface-container-high: #2a2929;
+    --on-surface: #e1e3e3;
+    --outline: #3a3939;
+    --design-flag: #c9a227;
+    --stub: #86d4d0;
+  }
+  html[data-theme="light"] {
+    --primary: #004d4b;
+    --secondary-container: #00f999;
+    --error: #ba1a1a;
+    --tertiary: #434545;
+    --surface: #f8fafa;
+    --surface-container: #eceeee;
+    --surface-container-high: #e6e8e8;
+    --on-surface: #191c1d;
+    --outline: #d1d5d5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--on-surface);
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--surface-container);
+    border-bottom: 1px solid var(--outline);
+    padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  header h1 { font-size: 18px; margin: 0; color: var(--primary); letter-spacing: -0.02em; }
+  header .meta { font-size: 12px; opacity: 0.7; }
+  main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface-container); border: 1px solid var(--outline); padding: 16px; }
+  .stat-card .value { font-size: 28px; font-weight: 700; }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--outline); font-size: 13px; }
+  th { cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; opacity: 0.7; }
+  .badge { display: inline-block; padding: 2px 8px; font-size: 11px; border: 1px solid var(--outline); }
+  .badge-critical, .badge-serious { color: var(--error); border-color: var(--error); }
+  .badge-moderate, .badge-minor { color: var(--tertiary); border-color: var(--tertiary); }
+  .badge-status { color: var(--primary); border-color: var(--primary); }
+  .violation, .file-entry { background: var(--surface-container); border: 1px solid var(--outline); margin-bottom: 8px; padding: 12px 16px; }
+  .violation summary, .file-entry summary { cursor: pointer; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .violation-body { margin-top: 12px; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  @media (max-width: 720px) { .diff-grid { grid-template-columns: 1fr; } }
+  pre { background: var(--surface); border: 1px solid var(--outline); padding: 10px; overflow-x: auto; max-height: 300px; }
+  .diff-label { font-size: 11px; text-transform: uppercase; opacity: 0.6; margin-bottom: 4px; }
+  .mono { font-family: inherit; }
+  .dim { opacity: 0.6; font-size: 12px; }
+  .swatch-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .swatch { width: 20px; height: 20px; border: 1px solid var(--outline); }
+  a { color: var(--primary); }
+  button#theme-toggle { background: transparent; border: 1px solid var(--outline); color: var(--on-surface); padding: 6px 12px; cursor: pointer; font-family: inherit; }
+  footer { padding: 24px; text-align: center; font-size: 11px; opacity: 0.5; }
+  section h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); border-bottom: 1px solid var(--outline); padding-bottom: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>♿ AccessibilityGuard — Fix Report</h1>
+  <div class="meta">
+    Report scan_1788518699854_3be5c9 · Branch <span class="mono">AG-Fix-scan_1788518699854_3be5c9-1788518790411</span> · 2026-09-04T10:46:30.844Z
+  </div>
+  <button id="theme-toggle" type="button">Toggle theme</button>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat-card"><div class="value">0</div><div class="label">Fixed</div></div>
+    <div class="stat-card"><div class="value">0</div><div class="label">Partial</div></div>
+    <div class="stat-card"><div class="value">5</div><div class="label">Manual Review</div></div>
+    <div class="stat-card"><div class="value">4</div><div class="label">Design Flags</div></div>
+    <div class="stat-card"><div class="value">0</div><div class="label">Stubs</div></div>
+    <div class="stat-card"><div class="value">5</div><div class="label">Files Changed</div></div>
+  </div>
+
+  <section>
+    <h2>Violations</h2>
+    <table id="violations-table">
+      <thead>
+        <tr>
+          <th data-sort="0">Rule</th>
+          <th data-sort="1">Impact</th>
+          <th data-sort="2">Status</th>
+          <th data-sort="3">File</th>
+          <th data-sort="4">Page</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr data-impact="needs-review" data-status="needs_review" data-file="">
+        <td>color-contrast-incomplete-0</td>
+        <td><span class="badge badge-needs-review">needs-review</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">—</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="needs-review" data-status="needs_review" data-file="">
+        <td>color-contrast-incomplete-0</td>
+        <td><span class="badge badge-needs-review">needs-review</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">—</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/app/admin/page.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/app/admin/page.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/app/admin/page.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/app/admin/page.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/app/admin/page.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/app/admin/page.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="moderate" data-status="needs_review" data-file="src/app/page.tsx">
+        <td>heading-order</td>
+        <td><span class="badge badge-moderate">moderate</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">src/app/page.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/context/AppContext.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/context/AppContext.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="needs_review" data-file="src/components/transactions/TransactionsView.tsx">
+        <td>scrollable-region-focusable</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">src/components/transactions/TransactionsView.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/transactions</td>
+      </tr>
+
+      <tr data-impact="critical" data-status="needs_review" data-file="src/app/layout.tsx">
+        <td>select-name</td>
+        <td><span class="badge badge-critical">critical</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">src/app/layout.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/transactions</td>
+      </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Fix Details</h2>
+    
+    <details class="violation">
+      <summary>
+        <span class="badge badge-needs-review">needs-review</span>
+        <strong>color-contrast-incomplete-0</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim"></span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 06&lt;/tspan&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 06&lt;/tspan&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">Could not resolve this violation to a source file. See the scan report for the selector and HTML snippet.</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-needs-review">needs-review</span>
+        <strong>color-contrast-incomplete-0</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim"></span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 06&lt;/tspan&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 06&lt;/tspan&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">Could not resolve this violation to a source file. See the scan report for the selector and HTML snippet.</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/app/admin/page.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/app/admin/page.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/app/admin/page.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-moderate">moderate</span>
+        <strong>heading-order</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim">src/app/page.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the order of headings is semantically correct</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/heading-order?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;h4 class=&quot;font-medium leading-tight text-sm&quot;&gt;Salary&lt;/h4&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;h4 class=&quot;font-medium leading-tight text-sm&quot;&gt;Salary&lt;/h4&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">No fixer implemented for rule &quot;heading-order&quot; (Fix heading hierarchy so levels are never skipped (h1→h2→h3, never h1→h3).).</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/context/AppContext.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>scrollable-region-focusable</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim">src/components/transactions/TransactionsView.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure elements that have scrollable content are accessible by keyboard</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/scrollable-region-focusable?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;div class=&quot;overflow-x-auto&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;div class=&quot;overflow-x-auto&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">No fixer implemented for rule &quot;scrollable-region-focusable&quot; (Add tabindex=&quot;0&quot; to scrollable regions not otherwise reachable by keyboard.).</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-critical">critical</span>
+        <strong>select-name</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim">src/app/layout.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure select element has an accessible name</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/select-name?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;select class=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;select class=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">Could not locate the target element in this file.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>File Change Log</h2>
+    
+    <details class="file-entry">
+      <summary><span class="mono">src/app/admin/page.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import { useState, useCallback } from &quot;react&quot;;
+import { motion } from &quot;framer-motion&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { TransactionsView } from &quot;@/components/transactions/TransactionsView&quot;;
+import { AddTransactionModal } from &quot;@/components/transactions/AddTransactionModal&quot;;
+import { Toast, ToastContainer, ToastProps } from &quot;@/components/ui/Toast&quot;;
+import { AlertTriangle, ShieldX, Plus } from &quot;lucide-react&quot;;
+
+export default function AdminPage() {
+  const { state } = useAppContext();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [toasts, setToasts] = useState&lt;Omit&lt;ToastProps, &quot;onDismiss&quot;&gt;[]&gt;([]);
+
+  const addToast = useCallback((message: string, type: ToastProps[&quot;type&quot;] = &quot;info&quot;) =&gt; {
+    const id = crypto.randomUUID();
+    setToasts((prev) =&gt; [...prev, { id, message, type }]);
+  }, []);
+
+  const dismissToast = useCallback((id: string) =&gt; {
+    setToasts((prev) =&gt; prev.filter((t) =&gt; t.id !== id));
+  }, []);
+
+  if (state.role !== &quot;admin&quot;) {
+    return (
+      &lt;div className=&quot;flex flex-col items-center justify-center min-h-[60vh] max-w-lg mx-auto text-center space-y-5&quot;&gt;
+        &lt;div className=&quot;p-5 bg-[#e23b4a]/8 rounded-full&quot;&gt;
+          &lt;ShieldX className=&quot;w-12 h-12 text-[#e23b4a]&quot; /&gt;
+        &lt;/div&gt;
+        &lt;h1 className=&quot;heading-section text-[1.75rem]&quot;&gt;Access Denied&lt;/h1&gt;
+        &lt;p className=&quot;text-[var(--muted)] text-[15px] max-w-sm leading-relaxed&quot;&gt;
+          This page is restricted to administrators. Switch your role
+          using the toggle in the navigation bar to access CRUD features.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  return (
+    &lt;motion.div {...ANIM.page} className=&quot;max-w-6xl mx-auto&quot;&gt;
+      &lt;header className=&quot;mb-8&quot;&gt;
+        &lt;div className=&quot;flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4&quot;&gt;
+          &lt;div&gt;
+            &lt;h1 className=&quot;heading-section text-[2rem] text-[#e23b4a]&quot;&gt;
+              Admin Dashboard
+            &lt;/h1&gt;
+            &lt;p className=&quot;text-[var(--muted)] mt-2 text-[15px]&quot;&gt;
+              Full CRUD access. Add, edit, or delete transactions.
+            &lt;/p&gt;
+          &lt;/div&gt;
+          &lt;button
+            onClick={() =&gt; setShowAddModal(true)}
+            className=&quot;btn-pill btn-primary !py-3 !px-6 shrink-0&quot;
+          &gt;
+            &lt;Plus className=&quot;w-4 h-4&quot; /&gt;
+            Add Transaction
+          &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div className=&quot;mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-[#ec7e00]/8 border border-[#ec7e00]/15 rounded-[9999px] text-sm text-[#ec7e00]&quot;&gt;
+          &lt;AlertTriangle className=&quot;w-4 h-4 shrink-0&quot; /&gt;
+          &lt;span className=&quot;text-xs sm:text-sm&quot;&gt;
+            &lt;strong&gt;Tip:&lt;/strong&gt; Add{&quot; &quot;}
+            &lt;code className=&quot;bg-[var(--surface-alt)] px-1.5 py-0.5 rounded-md text-xs font-mono&quot;&gt;
+              ?simulateErrors=true
+            &lt;/code&gt;{&quot; &quot;}
+            to the URL for API failure simulation.
+          &lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+
+      &lt;TransactionsView /&gt;
+
+      &lt;AddTransactionModal
+        isOpen={showAddModal}
+        onClose={() =&gt; setShowAddModal(false)}
+        onSuccess={(msg) =&gt; addToast(msg, &quot;success&quot;)}
+        onError={(msg) =&gt; addToast(msg, &quot;error&quot;)}
+      /&gt;
+
+      &lt;ToastContainer toasts={toasts} onDismiss={dismissToast} /&gt;
+    &lt;/motion.div&gt;
+  );
+}
+</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import { useState, useCallback } from &quot;react&quot;;
+import { motion } from &quot;framer-motion&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { TransactionsView } from &quot;@/components/transactions/TransactionsView&quot;;
+import { AddTransactionModal } from &quot;@/components/transactions/AddTransactionModal&quot;;
+import { Toast, ToastContainer, ToastProps } from &quot;@/components/ui/Toast&quot;;
+import { AlertTriangle, ShieldX, Plus } from &quot;lucide-react&quot;;
+
+export default function AdminPage() {
+  const { state } = useAppContext();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [toasts, setToasts] = useState&lt;Omit&lt;ToastProps, &quot;onDismiss&quot;&gt;[]&gt;([]);
+
+  const addToast = useCallback((message: string, type: ToastProps[&quot;type&quot;] = &quot;info&quot;) =&gt; {
+    const id = crypto.randomUUID();
+    setToasts((prev) =&gt; [...prev, { id, message, type }]);
+  }, []);
+
+  const dismissToast = useCallback((id: string) =&gt; {
+    setToasts((prev) =&gt; prev.filter((t) =&gt; t.id !== id));
+  }, []);
+
+  if (state.role !== &quot;admin&quot;) {
+    return (
+      &lt;div className=&quot;flex flex-col items-center justify-center min-h-[60vh] max-w-lg mx-auto text-center space-y-5&quot;&gt;
+        &lt;div className=&quot;p-5 bg-[#e23b4a]/8 rounded-full&quot;&gt;
+          &lt;ShieldX className=&quot;w-12 h-12 text-[#e23b4a]&quot; /&gt;
+        &lt;/div&gt;
+        &lt;h1 className=&quot;heading-section text-[1.75rem]&quot;&gt;Access Denied&lt;/h1&gt;
+        &lt;p className=&quot;text-[var(--muted)] text-[15px] max-w-sm leading-relaxed&quot;&gt;
+          This page is restricted to administrators. Switch your role
+          using the toggle in the navigation bar to access CRUD features.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  return (
+    &lt;motion.div {...ANIM.page} className=&quot;max-w-6xl mx-auto&quot;&gt;
+      &lt;header className=&quot;mb-8&quot;&gt;
+        &lt;div className=&quot;flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4&quot;&gt;
+          &lt;div&gt;
+            &lt;h1 className=&quot;heading-section text-[2rem] text-[#e23b4a]&quot;&gt;
+              Admin Dashboard
+            &lt;/h1&gt;
+            &lt;p className=&quot;text-[var(--muted)] mt-2 text-[15px]&quot;&gt;
+              Full CRUD access. Add, edit, or delete transactions.
+            &lt;/p&gt;
+          &lt;/div&gt;
+          &lt;button
+            onClick={() =&gt; setShowAddModal(true)}
+            className=&quot;btn-pill btn-primary !py-3 !px-6 shrink-0&quot;
+          &gt;
+            &lt;Plus className=&quot;w-4 h-4&quot; /&gt;
+            Add Transaction
+          &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div className=&quot;mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-[#ec7e00]/8 border border-[#ec7e00]/15 rounded-[9999px] text-sm text-[#ec7e00]&quot;&gt;
+          &lt;AlertTriangle className=&quot;w-4 h-4 shrink-0&quot; /&gt;
+          &lt;span className=&quot;text-xs sm:text-sm&quot;&gt;
+            &lt;strong&gt;Tip:&lt;/strong&gt; Add{&quot; &quot;}
+            &lt;code className=&quot;bg-[var(--surface-alt)] px-1.5 py-0.5 rounded-md text-xs font-mono&quot;&gt;
+              ?simulateErrors=true
+            &lt;/code&gt;{&quot; &quot;}
+            to the URL for API failure simulation.
+          &lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+
+      &lt;TransactionsView /&gt;
+
+      &lt;AddTransactionModal
+        isOpen={showAddModal}
+        onClose={() =&gt; setShowAddModal(false)}
+        onSuccess={(msg) =&gt; addToast(msg, &quot;success&quot;)}
+        onError={(msg) =&gt; addToast(msg, &quot;error&quot;)}
+      /&gt;
+
+      &lt;ToastContainer toasts={toasts} onDismiss={dismissToast} /&gt;
+    &lt;/motion.div&gt;
+  );
+}
+</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/app/page.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import { useMemo } from &quot;react&quot;;
+import { motion } from &quot;framer-motion&quot;;
+import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp } from &quot;lucide-react&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { SkeletonLoader } from &quot;@/components/ui/SkeletonLoader&quot;;
+import dynamic from &quot;next/dynamic&quot;;
+
+// Dynamic imports for charts to avoid SSR issues with Recharts
+const BalanceChart = dynamic(() =&gt; import(&quot;@/components/dashboard/BalanceChart&quot;).then(mod =&gt; mod.BalanceChart), { ssr: false, loading: () =&gt; &lt;SkeletonLoader type=&quot;card&quot; /&gt; });
+const CategoryChart = dynamic(() =&gt; import(&quot;@/components/dashboard/CategoryChart&quot;).then(mod =&gt; mod.CategoryChart), { ssr: false, loading: () =&gt; &lt;SkeletonLoader type=&quot;circle&quot; className=&quot;w-[200px] h-[200px] mx-auto&quot; /&gt; });
+const RecentTransactions = dynamic(() =&gt; import(&quot;@/components/dashboard/RecentTransactions&quot;).then(mod =&gt; mod.RecentTransactions), { ssr: false, loading: () =&gt; &lt;SkeletonLoader count={3} /&gt; });
+
+export default function DashboardPage() {
+  const { state } = useAppContext();
+  const { transactions } = state;
+
+  const { totalIncome, totalExpense, balance } = useMemo(() =&gt; {
+    return transactions.reduce(
+      (acc, curr) =&gt; {
+        if (curr.type === &quot;income&quot;) acc.totalIncome += curr.amount;
+        if (curr.type === &quot;expense&quot;) acc.totalExpense += curr.amount;
+        acc.balance = acc.totalIncome - acc.totalExpense;
+        return acc;
+      },
+      { totalIncome: 0, totalExpense: 0, balance: 0 }
+    );
+  }, [transactions]);
+
+  const cards = [
+    {
+      title: &quot;Total Balance&quot;,
+      amount: balance,
+      icon: &lt;Wallet className=&quot;w-5 h-5&quot; /&gt;,
+      color: &quot;#494fdf&quot;,
+      trend: &quot;+12.5%&quot;,
+    },
+    {
+      title: &quot;Total Income&quot;,
+      amount: totalIncome,
+      icon: &lt;ArrowUpRight className=&quot;w-5 h-5&quot; /&gt;,
+      color: &quot;#00a87e&quot;,
+      trend: &quot;+8.3%&quot;,
+    },
+    {
+      title: &quot;Total Expense&quot;,
+      amount: totalExpense,
+      icon: &lt;ArrowDownRight className=&quot;w-5 h-5&quot; /&gt;,
+      color: &quot;#e23b4a&quot;,
+      trend: &quot;-3.2%&quot;,
+    },
+  ];
+
+  return (
+    &lt;motion.div {...ANIM.page} className=&quot;max-w-6xl mx-auto space-y-8&quot;&gt;
+      {/* Page Header — Design.md: Section Heading at weight 500, tight tracking */}
+      &lt;header&gt;
+        &lt;h1 className=&quot;heading-section text-[2rem]&quot;&gt;Dashboard&lt;/h1&gt;
+        &lt;p className=&quot;text-[var(--muted)] mt-2 text-[15px]&quot;&gt;
+          Welcome back — here&amp;apos;s your financial overview.
+        &lt;/p&gt;
+      &lt;/header&gt;
+
+      {/* Summary Cards — Design.md: 20px radius, no shadows, flat surfaces */}
+      &lt;div className=&quot;grid grid-cols-1 lg:grid-cols-3 gap-5&quot;&gt;
+        {cards.map((card, i) =&gt; (
+          &lt;motion.div
+            key={card.title}
+            {...ANIM.row(i)}
+            className=&quot;card-surface p-6 flex flex-col justify-between gap-6 group hover:border-[var(--muted)]/40 transition-colors duration-300&quot;
+          &gt;
+            &lt;div className=&quot;flex items-center justify-between&quot;&gt;
+              &lt;span className=&quot;text-sm text-[var(--muted)] tracking-wide&quot;&gt;{card.title}&lt;/span&gt;
+              &lt;div
+                className=&quot;w-10 h-10 rounded-[12px] flex items-center justify-center transition-transform duration-300 group-hover:scale-110&quot;
+                style={{ backgroundColor: `${card.color}12`, color: card.color }}
+              &gt;
+                {card.icon}
+              &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div&gt;
+              &lt;div className=&quot;heading-card text-[1.75rem]&quot;&gt;
+                ₹{card.amount.toLocaleString(&quot;en-IN&quot;)}
+              &lt;/div&gt;
+              &lt;div className=&quot;flex items-center gap-1.5 mt-2&quot;&gt;
+                &lt;TrendingUp className=&quot;w-3.5 h-3.5&quot; style={{ color: card.color }} /&gt;
+                &lt;span className=&quot;text-xs font-medium&quot; style={{ color: card.color }}&gt;
+                  {card.trend}
+                &lt;/span&gt;
+                &lt;span className=&quot;text-xs text-[var(--muted)]&quot;&gt;vs last month&lt;/spa</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import { useMemo } from &quot;react&quot;;
+import { motion } from &quot;framer-motion&quot;;
+import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp } from &quot;lucide-react&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { SkeletonLoader } from &quot;@/components/ui/SkeletonLoader&quot;;
+import dynamic from &quot;next/dynamic&quot;;
+
+// Dynamic imports for charts to avoid SSR issues with Recharts
+const BalanceChart = dynamic(() =&gt; import(&quot;@/components/dashboard/BalanceChart&quot;).then(mod =&gt; mod.BalanceChart), { ssr: false, loading: () =&gt; &lt;SkeletonLoader type=&quot;card&quot; /&gt; });
+const CategoryChart = dynamic(() =&gt; import(&quot;@/components/dashboard/CategoryChart&quot;).then(mod =&gt; mod.CategoryChart), { ssr: false, loading: () =&gt; &lt;SkeletonLoader type=&quot;circle&quot; className=&quot;w-[200px] h-[200px] mx-auto&quot; /&gt; });
+const RecentTransactions = dynamic(() =&gt; import(&quot;@/components/dashboard/RecentTransactions&quot;).then(mod =&gt; mod.RecentTransactions), { ssr: false, loading: () =&gt; &lt;SkeletonLoader count={3} /&gt; });
+
+export default function DashboardPage() {
+  const { state } = useAppContext();
+  const { transactions } = state;
+
+  const { totalIncome, totalExpense, balance } = useMemo(() =&gt; {
+    return transactions.reduce(
+      (acc, curr) =&gt; {
+        if (curr.type === &quot;income&quot;) acc.totalIncome += curr.amount;
+        if (curr.type === &quot;expense&quot;) acc.totalExpense += curr.amount;
+        acc.balance = acc.totalIncome - acc.totalExpense;
+        return acc;
+      },
+      { totalIncome: 0, totalExpense: 0, balance: 0 }
+    );
+  }, [transactions]);
+
+  const cards = [
+    {
+      title: &quot;Total Balance&quot;,
+      amount: balance,
+      icon: &lt;Wallet className=&quot;w-5 h-5&quot; /&gt;,
+      color: &quot;#494fdf&quot;,
+      trend: &quot;+12.5%&quot;,
+    },
+    {
+      title: &quot;Total Income&quot;,
+      amount: totalIncome,
+      icon: &lt;ArrowUpRight className=&quot;w-5 h-5&quot; /&gt;,
+      color: &quot;#00a87e&quot;,
+      trend: &quot;+8.3%&quot;,
+    },
+    {
+      title: &quot;Total Expense&quot;,
+      amount: totalExpense,
+      icon: &lt;ArrowDownRight className=&quot;w-5 h-5&quot; /&gt;,
+      color: &quot;#e23b4a&quot;,
+      trend: &quot;-3.2%&quot;,
+    },
+  ];
+
+  return (
+    &lt;motion.div {...ANIM.page} className=&quot;max-w-6xl mx-auto space-y-8&quot;&gt;
+      {/* Page Header — Design.md: Section Heading at weight 500, tight tracking */}
+      &lt;header&gt;
+        &lt;h1 className=&quot;heading-section text-[2rem]&quot;&gt;Dashboard&lt;/h1&gt;
+        &lt;p className=&quot;text-[var(--muted)] mt-2 text-[15px]&quot;&gt;
+          Welcome back — here&amp;apos;s your financial overview.
+        &lt;/p&gt;
+      &lt;/header&gt;
+
+      {/* Summary Cards — Design.md: 20px radius, no shadows, flat surfaces */}
+      &lt;div className=&quot;grid grid-cols-1 lg:grid-cols-3 gap-5&quot;&gt;
+        {cards.map((card, i) =&gt; (
+          &lt;motion.div
+            key={card.title}
+            {...ANIM.row(i)}
+            className=&quot;card-surface p-6 flex flex-col justify-between gap-6 group hover:border-[var(--muted)]/40 transition-colors duration-300&quot;
+          &gt;
+            &lt;div className=&quot;flex items-center justify-between&quot;&gt;
+              &lt;span className=&quot;text-sm text-[var(--muted)] tracking-wide&quot;&gt;{card.title}&lt;/span&gt;
+              &lt;div
+                className=&quot;w-10 h-10 rounded-[12px] flex items-center justify-center transition-transform duration-300 group-hover:scale-110&quot;
+                style={{ backgroundColor: `${card.color}12`, color: card.color }}
+              &gt;
+                {card.icon}
+              &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div&gt;
+              &lt;div className=&quot;heading-card text-[1.75rem]&quot;&gt;
+                ₹{card.amount.toLocaleString(&quot;en-IN&quot;)}
+              &lt;/div&gt;
+              &lt;div className=&quot;flex items-center gap-1.5 mt-2&quot;&gt;
+                &lt;TrendingUp className=&quot;w-3.5 h-3.5&quot; style={{ color: card.color }} /&gt;
+                &lt;span className=&quot;text-xs font-medium&quot; style={{ color: card.color }}&gt;
+                  {card.trend}
+                &lt;/span&gt;
+                &lt;span className=&quot;text-xs text-[var(--muted)]&quot;&gt;vs last month&lt;/spa</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/context/AppContext.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from &quot;react&quot;;
+import { AppState, Action, appReducer, initialState } from &quot;./reducer&quot;;
+import { useLocalStorage } from &quot;@/hooks/useLocalStorage&quot;;
+import { generateSeedTransactions } from &quot;@/data/seedTransactions&quot;;
+
+type AppContextType = {
+  state: AppState;
+  dispatch: React.Dispatch&lt;Action&gt;;
+};
+
+const AppContext = createContext&lt;AppContextType | undefined&gt;(undefined);
+
+// Get initial theme from localStorage synchronously to avoid flash
+function getInitialTheme(): &quot;light&quot; | &quot;dark&quot; {
+  if (typeof window === &quot;undefined&quot;) return &quot;light&quot;;
+  try {
+    const stored = window.localStorage.getItem(&quot;fd_theme&quot;);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed === &quot;dark&quot; || parsed === &quot;light&quot;) return parsed;
+    }
+    // Fall back to system preference
+    if (window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).matches) return &quot;dark&quot;;
+  } catch {
+    // ignore
+  }
+  return &quot;light&quot;;
+}
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  // Use local storage for all persistent states
+  const [storedTransactions, setStoredTransactions] = useLocalStorage(&quot;fd_transactions&quot;, initialState.transactions);
+  const [storedRole, setStoredRole] = useLocalStorage(&quot;fd_role&quot;, initialState.role);
+  const [storedFilters, setStoredFilters] = useLocalStorage(&quot;fd_filters&quot;, initialState.filters);
+
+  // Get initial theme synchronously to prevent flash
+  const initTheme = getInitialTheme();
+
+  // Initialize reducer with stored values
+  const [state, dispatch] = useReducer(appReducer, {
+    ...initialState,
+    transactions: storedTransactions,
+    role: storedRole as &quot;viewer&quot; | &quot;admin&quot;,
+    filters: storedFilters,
+    theme: initTheme,
+  });
+
+  // Apply dark class immediately on mount and whenever theme changes
+  useEffect(() =&gt; {
+    const root = document.documentElement;
+    if (state.theme === &quot;dark&quot;) {
+      root.classList.add(&quot;dark&quot;);
+    } else {
+      root.classList.remove(&quot;dark&quot;);
+    }
+    // Persist theme to localStorage
+    try {
+      window.localStorage.setItem(&quot;fd_theme&quot;, JSON.stringify(state.theme));
+    } catch {
+      // ignore
+    }
+  }, [state.theme]);
+
+  // Hydration sync: on init, if transactions are empty, seed them.
+  useEffect(() =&gt; {
+    if (storedTransactions.length === 0) {
+      const seed = generateSeedTransactions();
+      dispatch({ type: &quot;LOAD_TRANSACTIONS&quot;, payload: seed });
+    }
+  }, []);
+
+  // Save changes back to localStorage
+  useEffect(() =&gt; {
+    setStoredTransactions(state.transactions);
+  }, [state.transactions, setStoredTransactions]);
+
+  useEffect(() =&gt; {
+    setStoredRole(state.role);
+  }, [state.role, setStoredRole]);
+
+  useEffect(() =&gt; {
+    setStoredFilters(state.filters);
+  }, [state.filters, setStoredFilters]);
+
+  return (
+    &lt;AppContext.Provider value={{ state, dispatch }}&gt;
+      {children}
+    &lt;/AppContext.Provider&gt;
+  );
+}
+
+export function useAppContext() {
+  const context = useContext(AppContext);
+  if (context === undefined) {
+    throw new Error(&quot;useAppContext must be used within an AppProvider&quot;);
+  }
+  return context;
+}
+
+</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from &quot;react&quot;;
+import { AppState, Action, appReducer, initialState } from &quot;./reducer&quot;;
+import { useLocalStorage } from &quot;@/hooks/useLocalStorage&quot;;
+import { generateSeedTransactions } from &quot;@/data/seedTransactions&quot;;
+
+type AppContextType = {
+  state: AppState;
+  dispatch: React.Dispatch&lt;Action&gt;;
+};
+
+const AppContext = createContext&lt;AppContextType | undefined&gt;(undefined);
+
+// Get initial theme from localStorage synchronously to avoid flash
+function getInitialTheme(): &quot;light&quot; | &quot;dark&quot; {
+  if (typeof window === &quot;undefined&quot;) return &quot;light&quot;;
+  try {
+    const stored = window.localStorage.getItem(&quot;fd_theme&quot;);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed === &quot;dark&quot; || parsed === &quot;light&quot;) return parsed;
+    }
+    // Fall back to system preference
+    if (window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).matches) return &quot;dark&quot;;
+  } catch {
+    // ignore
+  }
+  return &quot;light&quot;;
+}
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  // Use local storage for all persistent states
+  const [storedTransactions, setStoredTransactions] = useLocalStorage(&quot;fd_transactions&quot;, initialState.transactions);
+  const [storedRole, setStoredRole] = useLocalStorage(&quot;fd_role&quot;, initialState.role);
+  const [storedFilters, setStoredFilters] = useLocalStorage(&quot;fd_filters&quot;, initialState.filters);
+
+  // Get initial theme synchronously to prevent flash
+  const initTheme = getInitialTheme();
+
+  // Initialize reducer with stored values
+  const [state, dispatch] = useReducer(appReducer, {
+    ...initialState,
+    transactions: storedTransactions,
+    role: storedRole as &quot;viewer&quot; | &quot;admin&quot;,
+    filters: storedFilters,
+    theme: initTheme,
+  });
+
+  // Apply dark class immediately on mount and whenever theme changes
+  useEffect(() =&gt; {
+    const root = document.documentElement;
+    if (state.theme === &quot;dark&quot;) {
+      root.classList.add(&quot;dark&quot;);
+    } else {
+      root.classList.remove(&quot;dark&quot;);
+    }
+    // Persist theme to localStorage
+    try {
+      window.localStorage.setItem(&quot;fd_theme&quot;, JSON.stringify(state.theme));
+    } catch {
+      // ignore
+    }
+  }, [state.theme]);
+
+  // Hydration sync: on init, if transactions are empty, seed them.
+  useEffect(() =&gt; {
+    if (storedTransactions.length === 0) {
+      const seed = generateSeedTransactions();
+      dispatch({ type: &quot;LOAD_TRANSACTIONS&quot;, payload: seed });
+    }
+  }, []);
+
+  // Save changes back to localStorage
+  useEffect(() =&gt; {
+    setStoredTransactions(state.transactions);
+  }, [state.transactions, setStoredTransactions]);
+
+  useEffect(() =&gt; {
+    setStoredRole(state.role);
+  }, [state.role, setStoredRole]);
+
+  useEffect(() =&gt; {
+    setStoredFilters(state.filters);
+  }, [state.filters, setStoredFilters]);
+
+  return (
+    &lt;AppContext.Provider value={{ state, dispatch }}&gt;
+      {children}
+    &lt;/AppContext.Provider&gt;
+  );
+}
+
+export function useAppContext() {
+  const context = useContext(AppContext);
+  if (context === undefined) {
+    throw new Error(&quot;useAppContext must be used within an AppProvider&quot;);
+  }
+  return context;
+}
+
+</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/components/transactions/TransactionsView.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import { useMemo, useState, useCallback } from &quot;react&quot;;
+import { motion, AnimatePresence } from &quot;framer-motion&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { TransactionFilters } from &quot;./TransactionFilters&quot;;
+import { EmptyState } from &quot;@/components/ui/EmptyState&quot;;
+import { ConfirmDialog } from &quot;@/components/ui/ConfirmDialog&quot;;
+import { Toast, ToastContainer, ToastProps } from &quot;@/components/ui/Toast&quot;;
+import { format, parseISO } from &quot;date-fns&quot;;
+import { Edit2, Trash2 } from &quot;lucide-react&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { Transaction } from &quot;@/data/seedTransactions&quot;;
+import { EditTransactionModal } from &quot;./EditTransactionModal&quot;;
+
+export function TransactionsView() {
+  const { state, dispatch } = useAppContext();
+  const { transactions, filters, role } = state;
+  const isAdmin = role === &quot;admin&quot;;
+
+  const [deleteTarget, setDeleteTarget] = useState&lt;Transaction | null&gt;(null);
+  const [editTarget, setEditTarget] = useState&lt;Transaction | null&gt;(null);
+  const [toasts, setToasts] = useState&lt;Omit&lt;ToastProps, &quot;onDismiss&quot;&gt;[]&gt;([]);
+
+  const addToast = useCallback((message: string, type: ToastProps[&quot;type&quot;] = &quot;info&quot;) =&gt; {
+    const id = crypto.randomUUID();
+    setToasts((prev) =&gt; [...prev, { id, message, type }]);
+  }, []);
+
+  const dismissToast = useCallback((id: string) =&gt; {
+    setToasts((prev) =&gt; prev.filter((t) =&gt; t.id !== id));
+  }, []);
+
+  const filtered = useMemo(() =&gt; {
+    return transactions
+      .filter((t) =&gt; {
+        if (filters.search &amp;&amp; !t.description.toLowerCase().includes(filters.search.toLowerCase())) return false;
+        if (filters.type !== &quot;all&quot; &amp;&amp; t.type !== filters.type) return false;
+        if (filters.category &amp;&amp; t.category !== filters.category) return false;
+        if (filters.amountMin !== &quot;&quot; &amp;&amp; t.amount &lt; Number(filters.amountMin)) return false;
+        if (filters.amountMax !== &quot;&quot; &amp;&amp; t.amount &gt; Number(filters.amountMax)) return false;
+        if (filters.dateFrom &amp;&amp; t.date &lt; filters.dateFrom) return false;
+        if (filters.dateTo &amp;&amp; t.date &gt; filters.dateTo) return false;
+        return true;
+      })
+      .sort((a, b) =&gt; {
+        if (filters.sortBy === &quot;date&quot;) {
+          return filters.sortDir === &quot;desc&quot;
+            ? new Date(b.date).getTime() - new Date(a.date).getTime()
+            : new Date(a.date).getTime() - new Date(b.date).getTime();
+        }
+        if (filters.sortBy === &quot;amount&quot;) {
+          return filters.sortDir === &quot;desc&quot; ? b.amount - a.amount : a.amount - b.amount;
+        }
+        return 0;
+      });
+  }, [transactions, filters]);
+
+  const handleExportCSV = useCallback(() =&gt; {
+    const headers = [&quot;ID,Date,Description,Amount,Type,Category&quot;];
+    const rows = filtered.map(t =&gt; 
+      `${t.id},${t.date},&quot;${t.description.replace(/&quot;/g, &#39;&quot;&quot;&#39;)}&quot;,${t.amount},${t.type},${t.category}`
+    );
+    const csvContent = headers.concat(rows).join(&quot;\n&quot;);
+    const blob = new Blob([csvContent], { type: &#39;text/csv;charset=utf-8;&#39; });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to CSV successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+
+  const handleExportJSON = useCallback(() =&gt; {
+    const jsonContent = JSON.stringify(filtered, null, 2);
+    const blob = new Blob([jsonContent], { type: &#39;application/json;charset=utf-8;&#39; });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to JSON successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+
+  const handleDeleteConf</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import { useMemo, useState, useCallback } from &quot;react&quot;;
+import { motion, AnimatePresence } from &quot;framer-motion&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { TransactionFilters } from &quot;./TransactionFilters&quot;;
+import { EmptyState } from &quot;@/components/ui/EmptyState&quot;;
+import { ConfirmDialog } from &quot;@/components/ui/ConfirmDialog&quot;;
+import { Toast, ToastContainer, ToastProps } from &quot;@/components/ui/Toast&quot;;
+import { format, parseISO } from &quot;date-fns&quot;;
+import { Edit2, Trash2 } from &quot;lucide-react&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { Transaction } from &quot;@/data/seedTransactions&quot;;
+import { EditTransactionModal } from &quot;./EditTransactionModal&quot;;
+
+export function TransactionsView() {
+  const { state, dispatch } = useAppContext();
+  const { transactions, filters, role } = state;
+  const isAdmin = role === &quot;admin&quot;;
+
+  const [deleteTarget, setDeleteTarget] = useState&lt;Transaction | null&gt;(null);
+  const [editTarget, setEditTarget] = useState&lt;Transaction | null&gt;(null);
+  const [toasts, setToasts] = useState&lt;Omit&lt;ToastProps, &quot;onDismiss&quot;&gt;[]&gt;([]);
+
+  const addToast = useCallback((message: string, type: ToastProps[&quot;type&quot;] = &quot;info&quot;) =&gt; {
+    const id = crypto.randomUUID();
+    setToasts((prev) =&gt; [...prev, { id, message, type }]);
+  }, []);
+
+  const dismissToast = useCallback((id: string) =&gt; {
+    setToasts((prev) =&gt; prev.filter((t) =&gt; t.id !== id));
+  }, []);
+
+  const filtered = useMemo(() =&gt; {
+    return transactions
+      .filter((t) =&gt; {
+        if (filters.search &amp;&amp; !t.description.toLowerCase().includes(filters.search.toLowerCase())) return false;
+        if (filters.type !== &quot;all&quot; &amp;&amp; t.type !== filters.type) return false;
+        if (filters.category &amp;&amp; t.category !== filters.category) return false;
+        if (filters.amountMin !== &quot;&quot; &amp;&amp; t.amount &lt; Number(filters.amountMin)) return false;
+        if (filters.amountMax !== &quot;&quot; &amp;&amp; t.amount &gt; Number(filters.amountMax)) return false;
+        if (filters.dateFrom &amp;&amp; t.date &lt; filters.dateFrom) return false;
+        if (filters.dateTo &amp;&amp; t.date &gt; filters.dateTo) return false;
+        return true;
+      })
+      .sort((a, b) =&gt; {
+        if (filters.sortBy === &quot;date&quot;) {
+          return filters.sortDir === &quot;desc&quot;
+            ? new Date(b.date).getTime() - new Date(a.date).getTime()
+            : new Date(a.date).getTime() - new Date(b.date).getTime();
+        }
+        if (filters.sortBy === &quot;amount&quot;) {
+          return filters.sortDir === &quot;desc&quot; ? b.amount - a.amount : a.amount - b.amount;
+        }
+        return 0;
+      });
+  }, [transactions, filters]);
+
+  const handleExportCSV = useCallback(() =&gt; {
+    const headers = [&quot;ID,Date,Description,Amount,Type,Category&quot;];
+    const rows = filtered.map(t =&gt; 
+      `${t.id},${t.date},&quot;${t.description.replace(/&quot;/g, &#39;&quot;&quot;&#39;)}&quot;,${t.amount},${t.type},${t.category}`
+    );
+    const csvContent = headers.concat(rows).join(&quot;\n&quot;);
+    const blob = new Blob([csvContent], { type: &#39;text/csv;charset=utf-8;&#39; });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to CSV successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+
+  const handleExportJSON = useCallback(() =&gt; {
+    const jsonContent = JSON.stringify(filtered, null, 2);
+    const blob = new Blob([jsonContent], { type: &#39;application/json;charset=utf-8;&#39; });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to JSON successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+
+  const handleDeleteConf</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/app/layout.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>import type { Metadata } from &quot;next&quot;;
+import { Inter } from &quot;next/font/google&quot;;
+import &quot;./globals.css&quot;;
+import { AppProvider } from &quot;@/context/AppContext&quot;;
+import { Sidebar } from &quot;@/components/layout/Sidebar&quot;;
+import { Navbar } from &quot;@/components/layout/Navbar&quot;;
+import { MobileNav } from &quot;@/components/layout/MobileNav&quot;;
+
+const inter = Inter({
+  variable: &quot;--font-inter&quot;,
+  subsets: [&quot;latin&quot;],
+  display: &quot;swap&quot;,
+});
+
+export const metadata: Metadata = {
+  title: &quot;Zorvyn Finance&quot;,
+  description: &quot;Track personal financial activity — powered by data, designed with Revolut DNA.&quot;,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly&lt;{
+  children: React.ReactNode;
+}&gt;) {
+  return (
+    &lt;html lang=&quot;en&quot; suppressHydrationWarning&gt;
+      &lt;body className={`${inter.variable} min-h-screen flex font-sans overflow-x-hidden`}&gt;
+        &lt;AppProvider&gt;
+          &lt;Sidebar /&gt;
+          &lt;div className=&quot;flex-1 flex flex-col min-h-screen overflow-hidden&quot;&gt;
+            &lt;Navbar /&gt;
+            &lt;main className=&quot;flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-32 md:pb-8&quot;&gt;
+              {children}
+            &lt;/main&gt;
+          &lt;/div&gt;
+          &lt;MobileNav /&gt;
+        &lt;/AppProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>import type { Metadata } from &quot;next&quot;;
+import { Inter } from &quot;next/font/google&quot;;
+import &quot;./globals.css&quot;;
+import { AppProvider } from &quot;@/context/AppContext&quot;;
+import { Sidebar } from &quot;@/components/layout/Sidebar&quot;;
+import { Navbar } from &quot;@/components/layout/Navbar&quot;;
+import { MobileNav } from &quot;@/components/layout/MobileNav&quot;;
+
+const inter = Inter({
+  variable: &quot;--font-inter&quot;,
+  subsets: [&quot;latin&quot;],
+  display: &quot;swap&quot;,
+});
+
+export const metadata: Metadata = {
+  title: &quot;Zorvyn Finance&quot;,
+  description: &quot;Track personal financial activity — powered by data, designed with Revolut DNA.&quot;,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly&lt;{
+  children: React.ReactNode;
+}&gt;) {
+  return (
+    &lt;html lang=&quot;en&quot; suppressHydrationWarning&gt;
+      &lt;body className={`${inter.variable} min-h-screen flex font-sans overflow-x-hidden`}&gt;
+        &lt;AppProvider&gt;
+          &lt;Sidebar /&gt;
+          &lt;div className=&quot;flex-1 flex flex-col min-h-screen overflow-hidden&quot;&gt;
+            &lt;Navbar /&gt;
+            &lt;main className=&quot;flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-32 md:pb-8&quot;&gt;
+              {children}
+            &lt;/main&gt;
+          &lt;/div&gt;
+          &lt;MobileNav /&gt;
+        &lt;/AppProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+</code></pre></div>
+      </div>
+    </details>
+  </section>
+</main>
+<footer>
+  Report ID: scan_1788518699854_3be5c9 · Scanned 2026-09-04T10:44:59.854Z · Target: https://financial-dashboard-rust-sigma.vercel.app/ · Generated by AccessibilityGuard Fix Agent
+</footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var html = document.documentElement;
+    html.setAttribute('data-theme', html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('#violations-table th[data-sort]').forEach(function (th) {
+    th.addEventListener('click', function () {
+      var idx = Number(th.getAttribute('data-sort'));
+      var tbody = document.querySelector('#violations-table tbody');
+      var rows = Array.from(tbody.querySelectorAll('tr'));
+      var asc = th.getAttribute('data-asc') !== 'true';
+      rows.sort(function (a, b) {
+        var av = a.children[idx].textContent.trim();
+        var bv = b.children[idx].textContent.trim();
+        return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+      rows.forEach(function (r) { tbody.appendChild(r); });
+      document.querySelectorAll('#violations-table th[data-sort]').forEach(function (h) { h.removeAttribute('data-asc'); });
+      th.setAttribute('data-asc', String(asc));
+    });
+  });
+</script>
+</body>
+</html>
