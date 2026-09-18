@@ -33,7 +33,7 @@ export function RecentTransactions({ transactions }: { transactions: Transaction
                 <Icon className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-medium leading-tight text-sm">{t.description}</h4>
+                <h3 className="font-medium leading-tight text-sm">{t.description}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-[var(--muted)] font-medium bg-[var(--surface-alt)] px-2.5 py-0.5 rounded-[9999px]">
                     {t.category}
