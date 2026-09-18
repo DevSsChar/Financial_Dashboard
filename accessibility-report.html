@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AccessibilityGuard — Fix Report scan_1789753415765_b40ab0</title>
+<style>
+  :root {
+    --primary: #86d4d0;
+    --secondary-container: #36ffc4;
+    --error: #ffb4ab;
+    --tertiary: #ffb693;
+    --surface: #131313;
+    --surface-container: #201f1f;
+    --surface-container-high: #2a2929;
+    --on-surface: #e1e3e3;
+    --outline: #3a3939;
+    --design-flag: #c9a227;
+    --stub: #86d4d0;
+  }
+  html[data-theme="light"] {
+    --primary: #004d4b;
+    --secondary-container: #00f999;
+    --error: #ba1a1a;
+    --tertiary: #434545;
+    --surface: #f8fafa;
+    --surface-container: #eceeee;
+    --surface-container-high: #e6e8e8;
+    --on-surface: #191c1d;
+    --outline: #d1d5d5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--on-surface);
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--surface-container);
+    border-bottom: 1px solid var(--outline);
+    padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  header h1 { font-size: 18px; margin: 0; color: var(--primary); letter-spacing: -0.02em; }
+  header .meta { font-size: 12px; opacity: 0.7; }
+  main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface-container); border: 1px solid var(--outline); padding: 16px; }
+  .stat-card .value { font-size: 28px; font-weight: 700; }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--outline); font-size: 13px; }
+  th { cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; opacity: 0.7; }
+  .badge { display: inline-block; padding: 2px 8px; font-size: 11px; border: 1px solid var(--outline); }
+  .badge-critical, .badge-serious { color: var(--error); border-color: var(--error); }
+  .badge-moderate, .badge-minor { color: var(--tertiary); border-color: var(--tertiary); }
+  .badge-status { color: var(--primary); border-color: var(--primary); }
+  .violation, .file-entry { background: var(--surface-container); border: 1px solid var(--outline); margin-bottom: 8px; padding: 12px 16px; }
+  .violation summary, .file-entry summary { cursor: pointer; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .violation-body { margin-top: 12px; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  @media (max-width: 720px) { .diff-grid { grid-template-columns: 1fr; } }
+  pre { background: var(--surface); border: 1px solid var(--outline); padding: 10px; overflow-x: auto; max-height: 300px; }
+  .diff-label { font-size: 11px; text-transform: uppercase; opacity: 0.6; margin-bottom: 4px; }
+  .mono { font-family: inherit; }
+  .dim { opacity: 0.6; font-size: 12px; }
+  .swatch-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .swatch { width: 20px; height: 20px; border: 1px solid var(--outline); }
+  a { color: var(--primary); }
+  button#theme-toggle { background: transparent; border: 1px solid var(--outline); color: var(--on-surface); padding: 6px 12px; cursor: pointer; font-family: inherit; }
+  footer { padding: 24px; text-align: center; font-size: 11px; opacity: 0.5; }
+  section h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); border-bottom: 1px solid var(--outline); padding-bottom: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>♿ AccessibilityGuard — Fix Report</h1>
+  <div class="meta">
+    Report scan_1789753415765_b40ab0 · Branch <span class="mono">AG-Fix-scan_1789753415765_b40ab0-1789753544573</span> · 2026-09-18T17:46:31.192Z
+  </div>
+  <button id="theme-toggle" type="button">Toggle theme</button>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat-card"><div class="value">1</div><div class="label">Fixed</div></div>
+    <div class="stat-card"><div class="value">0</div><div class="label">Partial</div></div>
+    <div class="stat-card"><div class="value">4</div><div class="label">Manual Review</div></div>
+    <div class="stat-card"><div class="value">4</div><div class="label">Design Flags</div></div>
+    <div class="stat-card"><div class="value">0</div><div class="label">Stubs</div></div>
+    <div class="stat-card"><div class="value">4</div><div class="label">Files Changed</div></div>
+  </div>
+
+  <section>
+    <h2>Violations</h2>
+    <table id="violations-table">
+      <thead>
+        <tr>
+          <th data-sort="0">Rule</th>
+          <th data-sort="1">Impact</th>
+          <th data-sort="2">Status</th>
+          <th data-sort="3">File</th>
+          <th data-sort="4">Page</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr data-impact="needs-review" data-status="needs_review" data-file="">
+        <td>color-contrast-incomplete-0</td>
+        <td><span class="badge badge-needs-review">needs-review</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">—</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="needs-review" data-status="needs_review" data-file="">
+        <td>color-contrast-incomplete-0</td>
+        <td><span class="badge badge-needs-review">needs-review</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">—</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/components/layout/Sidebar.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/components/layout/Sidebar.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/components/layout/Sidebar.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/components/layout/Sidebar.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/components/layout/Sidebar.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/components/layout/Sidebar.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="design_flag" data-file="src/components/layout/Sidebar.tsx">
+        <td>color-contrast</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">🎨 Design Decision</span></td>
+        <td class="mono">src/components/layout/Sidebar.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="moderate" data-status="needs_review" data-file="src/components/dashboard/RecentTransactions.tsx">
+        <td>heading-order</td>
+        <td><span class="badge badge-moderate">moderate</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">src/components/dashboard/RecentTransactions.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
+      </tr>
+
+      <tr data-impact="serious" data-status="fixed" data-file="src/components/transactions/TransactionsView.tsx">
+        <td>scrollable-region-focusable</td>
+        <td><span class="badge badge-serious">serious</span></td>
+        <td><span class="badge badge-status">✅ Fixed</span></td>
+        <td class="mono">src/components/transactions/TransactionsView.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/transactions</td>
+      </tr>
+
+      <tr data-impact="critical" data-status="needs_review" data-file="src/components/transactions/TransactionFilters.tsx">
+        <td>select-name</td>
+        <td><span class="badge badge-critical">critical</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
+        <td class="mono">src/components/transactions/TransactionFilters.tsx</td>
+        <td>https://financial-dashboard-rust-sigma.vercel.app/transactions</td>
+      </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Fix Details</h2>
+    
+    <details class="violation">
+      <summary>
+        <span class="badge badge-needs-review">needs-review</span>
+        <strong>color-contrast-incomplete-0</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim"></span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 20&lt;/tspan&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 20&lt;/tspan&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">Could not resolve this violation to a source file. See the scan report for the selector and HTML snippet.</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-needs-review">needs-review</span>
+        <strong>color-contrast-incomplete-0</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim"></span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 20&lt;/tspan&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;tspan x=&quot;78.2258064516129&quot; dy=&quot;0.71em&quot;&gt;Aug 20&lt;/tspan&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">Could not resolve this violation to a source file. See the scan report for the selector and HTML snippet.</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/components/layout/Sidebar.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/components/layout/Sidebar.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/components/layout/Sidebar.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>color-contrast</strong>
+        <span class="badge badge-status">🎨 Design Decision</span>
+        <span class="mono dim">src/components/layout/Sidebar.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;a class=&quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px] text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot; href=&quot;/transactions&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-moderate">moderate</span>
+        <strong>heading-order</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim">src/components/dashboard/RecentTransactions.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure the order of headings is semantically correct</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/heading-order?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;h4 class=&quot;font-medium leading-tight text-sm&quot;&gt;Salary&lt;/h4&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;h4 class=&quot;font-medium leading-tight text-sm&quot;&gt;Salary&lt;/h4&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">No fixer implemented for rule &quot;heading-order&quot; (Fix heading hierarchy so levels are never skipped (h1→h2→h3, never h1→h3).). | AI attempt: AI fix rejected by evaluator: No changes were made to heading elements or their order, so the heading-order violation is not fixed.</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-serious">serious</span>
+        <strong>scrollable-region-focusable</strong>
+        <span class="badge badge-status">✅ Fixed</span>
+        <span class="mono dim">src/components/transactions/TransactionsView.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure elements that have scrollable content are accessible by keyboard</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/scrollable-region-focusable?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>    }
+  };
+  return &lt;div className=&quot;space-y-6&quot;&gt;
+      &lt;TransactionFilters onExportCSV={handleExportCSV} onExportJSON={handleExportJSON} /&gt;
+
+      &lt;div className=&quot;card-surface overflow-hidden&quot;&gt;
+        {filtered.length === 0 ? &lt;EmptyState title=&quot;No transactions found&quot; description=&quot;Try adjusting your filters or search terms.&quot; /&gt; : &lt;div className=&quot;overflow-x-auto&quot; tabIndex=&quot;0&quot;&gt;
+            &lt;table className=&quot;w-full text-left border-collapse min-w-[800px]&quot;&gt;
+              &lt;thead&gt;
+                &lt;tr className=&quot;border-b border-[var(--border)] bg-[var(--surface-alt)]&quot;&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Date&lt;/th&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Description&lt;/th&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Category&lt;/th&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-right&quot;&gt;Amount&lt;/th&gt;
+                  {isAdmin &amp;&amp; &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-center w-28&quot;&gt;Actions&lt;/th&gt;}
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;AnimatePresence&gt;
+                  {filtered.map((t, i) =&gt; &lt;motion.tr key={t.id} layout initial={{
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  delay: Math.min(i * 0.03, 0.3)
+                }
+              }} exit={{
+                opacity: 0,
+                x: -30,
+                transition: {
+                  duration: 0.2
+                }
+              }} className=&quot;border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-alt)] transition-colors group&quot;&gt;
+                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)] whitespace-nowrap&quot;&gt;
+                        {format(parseISO(t.date), &quot;MMM dd, yyyy&quot;)}
+                      &lt;/td&gt;
+                      &lt;td className=&quot;px-6 py-4 text-sm font-medium&quot;&gt;
+                        {t.description}
+                        {t.tags &amp;&amp; t.tags.length &gt; 0 &amp;&amp; &lt;span className=&quot;block mt-1 text-[11px] text-[var(--muted)] font-normal&quot;&gt;
+                            #{t.tags.join(&quot;, &quot;)}
+                          &lt;/span&gt;}
+                      &lt;/td&gt;
+                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)]&quot;&gt;
+                        &lt;span className=&quot;bg-[var(--surface-alt)] px-3 py-1 rounded-[9999px] text-[11px] font-medium&quot;&gt;
+                          {t.category}
+                        &lt;/span&gt;
+                      &lt;/td&gt;
+                      &lt;td className={`px-6 py-4 text-sm font-medium text-right whitespace-nowrap tabular-nums ${t.type === &quot;income&quot; ? &quot;text-[#00a87e]&quot; : &quot;&quot;}`}&gt;
+                        {t.type === &quot;income&quot; ? &quot;+&quot; : &quot;-&quot;}₹{t.amount.toLocaleString()}
+                      &lt;/td&gt;
+                      {isAdmin &amp;&amp; &lt;td className=&quot;px-6 py-4 text-sm text-center whitespace-nowrap&quot;&gt;
+                          &lt;div className=&quot;flex items-center justify-center gap-1&quot;&gt;
+                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#494fdf] hover:bg-[#494fdf]/8 transition-colors&quot; aria-label={`Edit ${t.description}`} onClick={() =&gt; setEditTarget(t)}&gt;
+                              &lt;Edit2 className=&quot;w-4 h-4&quot; /&gt;
+                            &lt;/button&gt;
+                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#e23b4a] hover:bg-[#e23b4a]/8 transition-colors&quot; aria-label={`Delete ${t.description}`} onClick={() =&gt; setDeleteTarget(t)}&gt;
+                              &lt;Trash2 className=&quot;w-4 h-4&quot; /&gt;
+                            &lt;/button&gt;
+                          &lt;/div&gt;
+                        &lt;/td&gt;}
+                    &lt;/motion.tr&gt;)}
+                &lt;/AnimatePresence&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+          &lt;/div&gt;}
+      &lt;/div&gt;
+
+      &lt;ConfirmDialog isOpen={!!deleteTarget} title=&quot;Delete Transaction&quot; description={deleteTarget ? `Are you sure you want to delete &quot;${deleteTarget.description}&quot;? This action will be simulated and may be rolled back.` : &quot;&quot;} confirmText=&quot;Delete&quot; cancelText=&quot;Keep&quot; onConfirm={handleDeleteConfirm} onCancel={() =&gt; setDeleteTarget(null)} isDestructive /&gt;
+
+      &lt;EditTransactionModal isOpen={!!editTarget} transaction={editTarget} onClose={() =&gt; setEditTarget(null)} onSuccess={msg =&gt; addToast(msg, &quot;success&quot;)} onError={msg =&gt; addToast(msg, &quot;error&quot;)} /&gt;
+
+      &lt;ToastContainer toasts={toasts} onDismiss={dismissToast} /&gt;
+    &lt;/div&gt;;
+}</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>    }
+  };
+  return &lt;div className=&quot;space-y-6&quot;&gt;
+      &lt;TransactionFilters onExportCSV={handleExportCSV} onExportJSON={handleExportJSON} /&gt;
+
+      &lt;div className=&quot;card-surface overflow-hidden&quot;&gt;
+        {filtered.length === 0 ? &lt;EmptyState title=&quot;No transactions found&quot; description=&quot;Try adjusting your filters or search terms.&quot; /&gt; : &lt;div className=&quot;overflow-x-auto&quot; tabIndex={0} role=&quot;region&quot; aria-label=&quot;Transactions table&quot;&gt;
+            &lt;table className=&quot;w-full text-left border-collapse min-w-[800px]&quot;&gt;
+              &lt;thead&gt;
+                &lt;tr className=&quot;border-b border-[var(--border)] bg-[var(--surface-alt)]&quot;&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Date&lt;/th&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Description&lt;/th&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Category&lt;/th&gt;
+                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-right&quot;&gt;Amount&lt;/th&gt;
+                  {isAdmin &amp;&amp; &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-center w-28&quot;&gt;Actions&lt;/th&gt;}
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;AnimatePresence&gt;
+                  {filtered.map((t, i) =&gt; &lt;motion.tr key={t.id} layout initial={{
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  delay: Math.min(i * 0.03, 0.3)
+                }
+              }} exit={{
+                opacity: 0,
+                x: -30,
+                transition: {
+                  duration: 0.2
+                }
+              }} className=&quot;border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-alt)] transition-colors group&quot;&gt;
+                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)] whitespace-nowrap&quot;&gt;
+                        {format(parseISO(t.date), &quot;MMM dd, yyyy&quot;)}
+                      &lt;/td&gt;
+                      &lt;td className=&quot;px-6 py-4 text-sm font-medium&quot;&gt;
+                        {t.description}
+                        {t.tags &amp;&amp; t.tags.length &gt; 0 &amp;&amp; &lt;span className=&quot;block mt-1 text-[11px] text-[var(--muted)] font-normal&quot;&gt;
+                            #{t.tags.join(&quot;, &quot;)}
+                          &lt;/span&gt;}
+                      &lt;/td&gt;
+                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)]&quot;&gt;
+                        &lt;span className=&quot;bg-[var(--surface-alt)] px-3 py-1 rounded-[9999px] text-[11px] font-medium&quot;&gt;
+                          {t.category}
+                        &lt;/span&gt;
+                      &lt;/td&gt;
+                      &lt;td className={`px-6 py-4 text-sm font-medium text-right whitespace-nowrap tabular-nums ${t.type === &quot;income&quot; ? &quot;text-[#00a87e]&quot; : &quot;&quot;}`}&gt;
+                        {t.type === &quot;income&quot; ? &quot;+&quot; : &quot;-&quot;}₹{t.amount.toLocaleString()}
+                      &lt;/td&gt;
+                      {isAdmin &amp;&amp; &lt;td className=&quot;px-6 py-4 text-sm text-center whitespace-nowrap&quot;&gt;
+                          &lt;div className=&quot;flex items-center justify-center gap-1&quot;&gt;
+                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#494fdf] hover:bg-[#494fdf]/8 transition-colors&quot; aria-label={`Edit ${t.description}`} onClick={() =&gt; setEditTarget(t)}&gt;
+                              &lt;Edit2 className=&quot;w-4 h-4&quot; /&gt;
+                            &lt;/button&gt;
+                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#e23b4a] hover:bg-[#e23b4a]/8 transition-colors&quot; aria-label={`Delete ${t.description}`} onClick={() =&gt; setDeleteTarget(t)}&gt;
+                              &lt;Trash2 className=&quot;w-4 h-4&quot; /&gt;
+                            &lt;/button&gt;
+                          &lt;/div&gt;
+                        &lt;/td&gt;}
+                    &lt;/motion.tr&gt;)}
+                &lt;/AnimatePresence&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+          &lt;/div&gt;}
+      &lt;/div&gt;
+
+      &lt;ConfirmDialog isOpen={!!deleteTarget} title=&quot;Delete Transaction&quot; description={deleteTarget ? `Are you sure you want to delete &quot;${deleteTarget.description}&quot;? This action will be simulated and may be rolled back.` : &quot;&quot;} confirmText=&quot;Delete&quot; cancelText=&quot;Keep&quot; onConfirm={handleDeleteConfirm} onCancel={() =&gt; setDeleteTarget(null)} isDestructive /&gt;
+
+      &lt;EditTransactionModal isOpen={!!editTarget} transaction={editTarget} onClose={() =&gt; setEditTarget(null)} onSuccess={msg =&gt; addToast(msg, &quot;success&quot;)} onError={msg =&gt; addToast(msg, &quot;error&quot;)} /&gt;
+
+      &lt;ToastContainer toasts={toasts} onDismiss={dismissToast} /&gt;
+    &lt;/div&gt;;
+}
+</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">[scrollable-region-focusable] needs_review: Attribute already present. | AI fallback fixed: scrollable-region-focusable</p>
+      </div>
+    </details>
+
+    <details class="violation">
+      <summary>
+        <span class="badge badge-critical">critical</span>
+        <strong>select-name</strong>
+        <span class="badge badge-status">🔴 Manual Review</span>
+        <span class="mono dim">src/components/transactions/TransactionFilters.tsx</span>
+      </summary>
+      <div class="violation-body">
+        <p>Ensure select element has an accessible name</p>
+        <p><a href="https://dequeuniversity.com/rules/axe/4.10/select-name?application=axe-puppeteer" target="_blank" rel="noopener">WCAG reference ↗</a></p>
+        <div class="diff-grid">
+          <div>
+            <div class="diff-label">Before</div>
+            <pre><code>&lt;select class=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot;&gt;</code></pre>
+          </div>
+          <div>
+            <div class="diff-label">After</div>
+            <pre><code>&lt;select class=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot;&gt;</code></pre>
+          </div>
+        </div>
+        
+        <p class="dim">Attribute already present. | AI attempt: AI fix rejected by evaluator: The fix changes the aria-label on the first select from &#39;Select an option&#39; to &#39;Transaction type&#39;, which is acceptable, but it also removes the aria-label from the second select, leaving it without an accessible name, so the violation is not fully fixed.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>File Change Log</h2>
+    
+    <details class="file-entry">
+      <summary><span class="mono">src/components/layout/Sidebar.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import Link from &quot;next/link&quot;;
+import { usePathname } from &quot;next/navigation&quot;;
+import { LayoutDashboard, ArrowLeftRight, Settings, PieChart, Shield } from &quot;lucide-react&quot;;
+import clsx from &quot;clsx&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+
+const navItems = [
+  { name: &quot;Dashboard&quot;, href: &quot;/&quot;, icon: LayoutDashboard },
+  { name: &quot;Transactions&quot;, href: &quot;/transactions&quot;, icon: ArrowLeftRight },
+  { name: &quot;Insights&quot;, href: &quot;/insights&quot;, icon: PieChart },
+];
+
+const adminItems = [
+  { name: &quot;Admin (CRUD)&quot;, href: &quot;/admin&quot;, icon: Shield },
+];
+
+export function Sidebar() {
+  const pathname = usePathname();
+  const { state } = useAppContext();
+
+  return (
+    &lt;aside className=&quot;hidden md:flex flex-col w-64 h-full border-r border-[var(--border)] bg-[var(--surface)] p-5 font-sans&quot;&gt;
+      {/* Logo — Design.md: pill-shaped badge */}
+      &lt;div className=&quot;flex items-center gap-3 px-2 py-4 mb-8&quot;&gt;
+        &lt;div className=&quot;w-9 h-9 rounded-[9999px] bg-[#191c1f] dark:bg-white flex items-center justify-center&quot;&gt;
+          &lt;span className=&quot;text-white dark:text-[#191c1f] text-base font-medium leading-none&quot;&gt;Z&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;span className=&quot;heading-card text-xl&quot;&gt;Zorvyn&lt;/span&gt;
+      &lt;/div&gt;
+
+      {/* Navigation — Design.md: 9999px radius, weight 500 for nav */}
+      &lt;nav className=&quot;flex-1 space-y-1&quot;&gt;
+        {navItems.map((item) =&gt; {
+          const isActive = pathname === item.href;
+          return (
+            &lt;Link
+              key={item.name}
+              href={item.href}
+              className={clsx(
+                &quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px]&quot;,
+                isActive
+                  ? &quot;bg-[var(--surface-alt)] font-medium&quot;
+                  : &quot;text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot;
+              )}
+            &gt;
+              &lt;item.icon
+                className={clsx(
+                  &quot;w-[18px] h-[18px]&quot;,
+                  isActive ? &quot;&quot; : &quot;text-[var(--muted)] group-hover:text-[var(--foreground)]&quot;
+                )}
+              /&gt;
+              {item.name}
+            &lt;/Link&gt;
+          );
+        })}
+
+        {/* Admin section */}
+        {state.role === &quot;admin&quot; &amp;&amp; (
+          &lt;div className=&quot;pt-6 mt-6 border-t border-[var(--border)]&quot;&gt;
+            &lt;h4 className=&quot;px-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] mb-2&quot;&gt;
+              Admin
+            &lt;/h4&gt;
+            {adminItems.map((item) =&gt; {
+              const isActive = pathname === item.href;
+              return (
+                &lt;Link
+                  key={item.name}
+                  href={item.href}
+                  className={clsx(
+                    &quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px]&quot;,
+                    isActive
+                      ? &quot;bg-[#e23b4a]/8 text-[#e23b4a] font-medium&quot;
+                      : &quot;text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot;
+                  )}
+                &gt;
+                  &lt;item.icon
+                    className={clsx(
+                      &quot;w-[18px] h-[18px]&quot;,
+                      isActive ? &quot;text-[#e23b4a]&quot; : &quot;text-[var(--muted)] group-hover:text-[var(--foreground)]&quot;
+                    )}
+                  /&gt;
+                  {item.name}
+                &lt;/Link&gt;
+              );
+            })}
+          &lt;/div&gt;
+        )}
+      &lt;/nav&gt;
+
+      {/* Settings — pinned bottom */}
+      &lt;div className=&quot;mt-auto px-1 pb-2&quot;&gt;
+        &lt;Link
+          href=&quot;/settings&quot;
+          className={clsx(
+            &quot;flex items-center gap-3 px-4 py-2.5 text-[14px] rounded-[9999px] transition-all duration-200 group&quot;,
+            pathname === &quot;/settings&quot;
+              ? &quot;bg-[var(--surface-alt)] font-medium&quot;
+              : &quot;text-[var(--muted)] font-normal hover:text-</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import Link from &quot;next/link&quot;;
+import { usePathname } from &quot;next/navigation&quot;;
+import { LayoutDashboard, ArrowLeftRight, Settings, PieChart, Shield } from &quot;lucide-react&quot;;
+import clsx from &quot;clsx&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+
+const navItems = [
+  { name: &quot;Dashboard&quot;, href: &quot;/&quot;, icon: LayoutDashboard },
+  { name: &quot;Transactions&quot;, href: &quot;/transactions&quot;, icon: ArrowLeftRight },
+  { name: &quot;Insights&quot;, href: &quot;/insights&quot;, icon: PieChart },
+];
+
+const adminItems = [
+  { name: &quot;Admin (CRUD)&quot;, href: &quot;/admin&quot;, icon: Shield },
+];
+
+export function Sidebar() {
+  const pathname = usePathname();
+  const { state } = useAppContext();
+
+  return (
+    &lt;aside className=&quot;hidden md:flex flex-col w-64 h-full border-r border-[var(--border)] bg-[var(--surface)] p-5 font-sans&quot;&gt;
+      {/* Logo — Design.md: pill-shaped badge */}
+      &lt;div className=&quot;flex items-center gap-3 px-2 py-4 mb-8&quot;&gt;
+        &lt;div className=&quot;w-9 h-9 rounded-[9999px] bg-[#191c1f] dark:bg-white flex items-center justify-center&quot;&gt;
+          &lt;span className=&quot;text-white dark:text-[#191c1f] text-base font-medium leading-none&quot;&gt;Z&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;span className=&quot;heading-card text-xl&quot;&gt;Zorvyn&lt;/span&gt;
+      &lt;/div&gt;
+
+      {/* Navigation — Design.md: 9999px radius, weight 500 for nav */}
+      &lt;nav className=&quot;flex-1 space-y-1&quot;&gt;
+        {navItems.map((item) =&gt; {
+          const isActive = pathname === item.href;
+          return (
+            &lt;Link
+              key={item.name}
+              href={item.href}
+              className={clsx(
+                &quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px]&quot;,
+                isActive
+                  ? &quot;bg-[var(--surface-alt)] font-medium&quot;
+                  : &quot;text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot;
+              )}
+            &gt;
+              &lt;item.icon
+                className={clsx(
+                  &quot;w-[18px] h-[18px]&quot;,
+                  isActive ? &quot;&quot; : &quot;text-[var(--muted)] group-hover:text-[var(--foreground)]&quot;
+                )}
+              /&gt;
+              {item.name}
+            &lt;/Link&gt;
+          );
+        })}
+
+        {/* Admin section */}
+        {state.role === &quot;admin&quot; &amp;&amp; (
+          &lt;div className=&quot;pt-6 mt-6 border-t border-[var(--border)]&quot;&gt;
+            &lt;h4 className=&quot;px-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] mb-2&quot;&gt;
+              Admin
+            &lt;/h4&gt;
+            {adminItems.map((item) =&gt; {
+              const isActive = pathname === item.href;
+              return (
+                &lt;Link
+                  key={item.name}
+                  href={item.href}
+                  className={clsx(
+                    &quot;flex items-center gap-3 px-4 py-2.5 rounded-[9999px] transition-all duration-200 group text-[14px]&quot;,
+                    isActive
+                      ? &quot;bg-[#e23b4a]/8 text-[#e23b4a] font-medium&quot;
+                      : &quot;text-[var(--muted)] font-normal hover:bg-[var(--surface-alt)] hover:text-[var(--foreground)]&quot;
+                  )}
+                &gt;
+                  &lt;item.icon
+                    className={clsx(
+                      &quot;w-[18px] h-[18px]&quot;,
+                      isActive ? &quot;text-[#e23b4a]&quot; : &quot;text-[var(--muted)] group-hover:text-[var(--foreground)]&quot;
+                    )}
+                  /&gt;
+                  {item.name}
+                &lt;/Link&gt;
+              );
+            })}
+          &lt;/div&gt;
+        )}
+      &lt;/nav&gt;
+
+      {/* Settings — pinned bottom */}
+      &lt;div className=&quot;mt-auto px-1 pb-2&quot;&gt;
+        &lt;Link
+          href=&quot;/settings&quot;
+          className={clsx(
+            &quot;flex items-center gap-3 px-4 py-2.5 text-[14px] rounded-[9999px] transition-all duration-200 group&quot;,
+            pathname === &quot;/settings&quot;
+              ? &quot;bg-[var(--surface-alt)] font-medium&quot;
+              : &quot;text-[var(--muted)] font-normal hover:text-</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/components/dashboard/RecentTransactions.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import { Transaction } from &quot;@/data/seedTransactions&quot;;
+import { format, parseISO } from &quot;date-fns&quot;;
+import { ArrowUpRight, ArrowDownRight } from &quot;lucide-react&quot;;
+import { CHART_COLORS } from &quot;@/constants/chartColors&quot;;
+import Link from &quot;next/link&quot;;
+
+export function RecentTransactions({ transactions }: { transactions: Transaction[] }) {
+  // Show only top 5 recent transactions
+  const recent = [...transactions]
+    .sort((a, b) =&gt; new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
+  if (!recent.length) {
+    return &lt;p className=&quot;text-sm text-[var(--muted)]&quot;&gt;No recent transactions.&lt;/p&gt;;
+  }
+
+  return (
+    &lt;div className=&quot;flex flex-col gap-3&quot;&gt;
+      {recent.map((t) =&gt; {
+        const isIncome = t.type === &quot;income&quot;;
+        const Icon = isIncome ? ArrowUpRight : ArrowDownRight;
+        const color = isIncome ? &quot;#00a87e&quot; : CHART_COLORS[t.category] || &quot;#e23b4a&quot;;
+
+        return (
+          &lt;div key={t.id} className=&quot;flex items-center justify-between p-3 hover:bg-[var(--surface-alt)] rounded-2xl transition-colors&quot;&gt;
+            &lt;div className=&quot;flex items-center gap-4&quot;&gt;
+              &lt;div 
+                className=&quot;w-11 h-11 rounded-full flex items-center justify-center&quot;
+                style={{ backgroundColor: `${color}15`, color }}
+              &gt;
+                &lt;Icon className=&quot;w-5 h-5&quot; /&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;h3 className=&quot;font-medium leading-tight text-sm&quot;&gt;{t.description}&lt;/h3&gt;
+                &lt;div className=&quot;flex items-center gap-2 mt-1&quot;&gt;
+                  &lt;span className=&quot;text-xs text-[var(--muted)] font-medium bg-[var(--surface-alt)] px-2.5 py-0.5 rounded-[9999px]&quot;&gt;
+                    {t.category}
+                  &lt;/span&gt;
+                  &lt;span className=&quot;text-xs text-[var(--muted)]&quot;&gt;{format(parseISO(t.date), &quot;MMM dd, yyyy&quot;)}&lt;/span&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div className={`font-medium text-right text-sm tabular-nums ${isIncome ? &#39;text-[#00a87e]&#39; : &#39;&#39;}`}&gt;
+              {isIncome ? &quot;+&quot; : &quot;-&quot;}₹{t.amount.toLocaleString()}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        );
+      })}
+      
+      &lt;div className=&quot;pt-2&quot;&gt;
+        &lt;Link href=&quot;/transactions&quot; className=&quot;text-sm font-medium text-[#494fdf] hover:underline&quot;&gt;
+          View all transactions &amp;rarr;
+        &lt;/Link&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import { Transaction } from &quot;@/data/seedTransactions&quot;;
+import { format, parseISO } from &quot;date-fns&quot;;
+import { ArrowUpRight, ArrowDownRight } from &quot;lucide-react&quot;;
+import { CHART_COLORS } from &quot;@/constants/chartColors&quot;;
+import Link from &quot;next/link&quot;;
+
+export function RecentTransactions({ transactions }: { transactions: Transaction[] }) {
+  // Show only top 5 recent transactions
+  const recent = [...transactions]
+    .sort((a, b) =&gt; new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
+  if (!recent.length) {
+    return &lt;p className=&quot;text-sm text-[var(--muted)]&quot;&gt;No recent transactions.&lt;/p&gt;;
+  }
+
+  return (
+    &lt;div className=&quot;flex flex-col gap-3&quot;&gt;
+      {recent.map((t) =&gt; {
+        const isIncome = t.type === &quot;income&quot;;
+        const Icon = isIncome ? ArrowUpRight : ArrowDownRight;
+        const color = isIncome ? &quot;#00a87e&quot; : CHART_COLORS[t.category] || &quot;#e23b4a&quot;;
+
+        return (
+          &lt;div key={t.id} className=&quot;flex items-center justify-between p-3 hover:bg-[var(--surface-alt)] rounded-2xl transition-colors&quot;&gt;
+            &lt;div className=&quot;flex items-center gap-4&quot;&gt;
+              &lt;div 
+                className=&quot;w-11 h-11 rounded-full flex items-center justify-center&quot;
+                style={{ backgroundColor: `${color}15`, color }}
+              &gt;
+                &lt;Icon className=&quot;w-5 h-5&quot; /&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;h3 className=&quot;font-medium leading-tight text-sm&quot;&gt;{t.description}&lt;/h3&gt;
+                &lt;div className=&quot;flex items-center gap-2 mt-1&quot;&gt;
+                  &lt;span className=&quot;text-xs text-[var(--muted)] font-medium bg-[var(--surface-alt)] px-2.5 py-0.5 rounded-[9999px]&quot;&gt;
+                    {t.category}
+                  &lt;/span&gt;
+                  &lt;span className=&quot;text-xs text-[var(--muted)]&quot;&gt;{format(parseISO(t.date), &quot;MMM dd, yyyy&quot;)}&lt;/span&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div className={`font-medium text-right text-sm tabular-nums ${isIncome ? &#39;text-[#00a87e]&#39; : &#39;&#39;}`}&gt;
+              {isIncome ? &quot;+&quot; : &quot;-&quot;}₹{t.amount.toLocaleString()}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        );
+      })}
+      
+      &lt;div className=&quot;pt-2&quot;&gt;
+        &lt;Link href=&quot;/transactions&quot; className=&quot;text-sm font-medium text-[#494fdf] hover:underline&quot;&gt;
+          View all transactions &amp;rarr;
+        &lt;/Link&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/components/transactions/TransactionsView.tsx</span> <span class="dim">58 line(s) changed · 1 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
+
+import { useMemo, useState, useCallback } from &quot;react&quot;;
+import { motion, AnimatePresence } from &quot;framer-motion&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { TransactionFilters } from &quot;./TransactionFilters&quot;;
+import { EmptyState } from &quot;@/components/ui/EmptyState&quot;;
+import { ConfirmDialog } from &quot;@/components/ui/ConfirmDialog&quot;;
+import { Toast, ToastContainer, ToastProps } from &quot;@/components/ui/Toast&quot;;
+import { format, parseISO } from &quot;date-fns&quot;;
+import { Edit2, Trash2 } from &quot;lucide-react&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { Transaction } from &quot;@/data/seedTransactions&quot;;
+import { EditTransactionModal } from &quot;./EditTransactionModal&quot;;
+export function TransactionsView() {
+  const {
+    state,
+    dispatch
+  } = useAppContext();
+  const {
+    transactions,
+    filters,
+    role
+  } = state;
+  const isAdmin = role === &quot;admin&quot;;
+  const [deleteTarget, setDeleteTarget] = useState&lt;Transaction | null&gt;(null);
+  const [editTarget, setEditTarget] = useState&lt;Transaction | null&gt;(null);
+  const [toasts, setToasts] = useState&lt;Omit&lt;ToastProps, &quot;onDismiss&quot;&gt;[]&gt;([]);
+  const addToast = useCallback((message: string, type: ToastProps[&quot;type&quot;] = &quot;info&quot;) =&gt; {
+    const id = crypto.randomUUID();
+    setToasts(prev =&gt; [...prev, {
+      id,
+      message,
+      type
+    }]);
+  }, []);
+  const dismissToast = useCallback((id: string) =&gt; {
+    setToasts(prev =&gt; prev.filter(t =&gt; t.id !== id));
+  }, []);
+  const filtered = useMemo(() =&gt; {
+    return transactions.filter(t =&gt; {
+      if (filters.search &amp;&amp; !t.description.toLowerCase().includes(filters.search.toLowerCase())) return false;
+      if (filters.type !== &quot;all&quot; &amp;&amp; t.type !== filters.type) return false;
+      if (filters.category &amp;&amp; t.category !== filters.category) return false;
+      if (filters.amountMin !== &quot;&quot; &amp;&amp; t.amount &lt; Number(filters.amountMin)) return false;
+      if (filters.amountMax !== &quot;&quot; &amp;&amp; t.amount &gt; Number(filters.amountMax)) return false;
+      if (filters.dateFrom &amp;&amp; t.date &lt; filters.dateFrom) return false;
+      if (filters.dateTo &amp;&amp; t.date &gt; filters.dateTo) return false;
+      return true;
+    }).sort((a, b) =&gt; {
+      if (filters.sortBy === &quot;date&quot;) {
+        return filters.sortDir === &quot;desc&quot; ? new Date(b.date).getTime() - new Date(a.date).getTime() : new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+      if (filters.sortBy === &quot;amount&quot;) {
+        return filters.sortDir === &quot;desc&quot; ? b.amount - a.amount : a.amount - b.amount;
+      }
+      return 0;
+    });
+  }, [transactions, filters]);
+  const handleExportCSV = useCallback(() =&gt; {
+    const headers = [&quot;ID,Date,Description,Amount,Type,Category&quot;];
+    const rows = filtered.map(t =&gt; `${t.id},${t.date},&quot;${t.description.replace(/&quot;/g, &#39;&quot;&quot;&#39;)}&quot;,${t.amount},${t.type},${t.category}`);
+    const csvContent = headers.concat(rows).join(&quot;\n&quot;);
+    const blob = new Blob([csvContent], {
+      type: &#39;text/csv;charset=utf-8;&#39;
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to CSV successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+  const handleExportJSON = useCallback(() =&gt; {
+    const jsonContent = JSON.stringify(filtered, null, 2);
+    const blob = new Blob([jsonContent], {
+      type: &#39;application/json;charset=utf-8;&#39;
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to JSON successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+  const handleDeleteConfirm = async () =&gt; {
+    if (!deleteTarget) return;
+    const tx = deleteTarget;
+    setDeleteTarget(null);
+    dispatch({
+</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>&quot;use client&quot;;
+
+import { useMemo, useState, useCallback } from &quot;react&quot;;
+import { motion, AnimatePresence } from &quot;framer-motion&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { TransactionFilters } from &quot;./TransactionFilters&quot;;
+import { EmptyState } from &quot;@/components/ui/EmptyState&quot;;
+import { ConfirmDialog } from &quot;@/components/ui/ConfirmDialog&quot;;
+import { Toast, ToastContainer, ToastProps } from &quot;@/components/ui/Toast&quot;;
+import { format, parseISO } from &quot;date-fns&quot;;
+import { Edit2, Trash2 } from &quot;lucide-react&quot;;
+import { ANIM } from &quot;@/constants/animations&quot;;
+import { Transaction } from &quot;@/data/seedTransactions&quot;;
+import { EditTransactionModal } from &quot;./EditTransactionModal&quot;;
+export function TransactionsView() {
+  const {
+    state,
+    dispatch
+  } = useAppContext();
+  const {
+    transactions,
+    filters,
+    role
+  } = state;
+  const isAdmin = role === &quot;admin&quot;;
+  const [deleteTarget, setDeleteTarget] = useState&lt;Transaction | null&gt;(null);
+  const [editTarget, setEditTarget] = useState&lt;Transaction | null&gt;(null);
+  const [toasts, setToasts] = useState&lt;Omit&lt;ToastProps, &quot;onDismiss&quot;&gt;[]&gt;([]);
+  const addToast = useCallback((message: string, type: ToastProps[&quot;type&quot;] = &quot;info&quot;) =&gt; {
+    const id = crypto.randomUUID();
+    setToasts(prev =&gt; [...prev, {
+      id,
+      message,
+      type
+    }]);
+  }, []);
+  const dismissToast = useCallback((id: string) =&gt; {
+    setToasts(prev =&gt; prev.filter(t =&gt; t.id !== id));
+  }, []);
+  const filtered = useMemo(() =&gt; {
+    return transactions.filter(t =&gt; {
+      if (filters.search &amp;&amp; !t.description.toLowerCase().includes(filters.search.toLowerCase())) return false;
+      if (filters.type !== &quot;all&quot; &amp;&amp; t.type !== filters.type) return false;
+      if (filters.category &amp;&amp; t.category !== filters.category) return false;
+      if (filters.amountMin !== &quot;&quot; &amp;&amp; t.amount &lt; Number(filters.amountMin)) return false;
+      if (filters.amountMax !== &quot;&quot; &amp;&amp; t.amount &gt; Number(filters.amountMax)) return false;
+      if (filters.dateFrom &amp;&amp; t.date &lt; filters.dateFrom) return false;
+      if (filters.dateTo &amp;&amp; t.date &gt; filters.dateTo) return false;
+      return true;
+    }).sort((a, b) =&gt; {
+      if (filters.sortBy === &quot;date&quot;) {
+        return filters.sortDir === &quot;desc&quot; ? new Date(b.date).getTime() - new Date(a.date).getTime() : new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+      if (filters.sortBy === &quot;amount&quot;) {
+        return filters.sortDir === &quot;desc&quot; ? b.amount - a.amount : a.amount - b.amount;
+      }
+      return 0;
+    });
+  }, [transactions, filters]);
+  const handleExportCSV = useCallback(() =&gt; {
+    const headers = [&quot;ID,Date,Description,Amount,Type,Category&quot;];
+    const rows = filtered.map(t =&gt; `${t.id},${t.date},&quot;${t.description.replace(/&quot;/g, &#39;&quot;&quot;&#39;)}&quot;,${t.amount},${t.type},${t.category}`);
+    const csvContent = headers.concat(rows).join(&quot;\n&quot;);
+    const blob = new Blob([csvContent], {
+      type: &#39;text/csv;charset=utf-8;&#39;
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to CSV successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+  const handleExportJSON = useCallback(() =&gt; {
+    const jsonContent = JSON.stringify(filtered, null, 2);
+    const blob = new Blob([jsonContent], {
+      type: &#39;application/json;charset=utf-8;&#39;
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement(&quot;a&quot;);
+    link.href = url;
+    link.download = `transactions_${format(new Date(), &quot;yyyyMMdd&quot;)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast(&quot;Exported to JSON successfully&quot;, &quot;success&quot;);
+  }, [filtered, addToast]);
+  const handleDeleteConfirm = async () =&gt; {
+    if (!deleteTarget) return;
+    const tx = deleteTarget;
+    setDeleteTarget(null);
+    dispatch({
+</code></pre></div>
+      </div>
+    </details>
+
+    <details class="file-entry">
+      <summary><span class="mono">src/components/transactions/TransactionFilters.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
+      <div class="diff-grid">
+        <div><div class="diff-label">Before</div><pre><code>import { useState } from &quot;react&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { Search, SlidersHorizontal, Download, ChevronDown, ChevronUp, X } from &quot;lucide-react&quot;;
+import { CATEGORIES } from &quot;@/constants/categories&quot;;
+import { motion, AnimatePresence } from &quot;framer-motion&quot;;
+type TransactionFiltersProps = {
+  onExportCSV?: () =&gt; void;
+  onExportJSON?: () =&gt; void;
+};
+export function TransactionFilters({
+  onExportCSV,
+  onExportJSON
+}: TransactionFiltersProps) {
+  const {
+    state,
+    dispatch
+  } = useAppContext();
+  const {
+    filters
+  } = state;
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  return &lt;div className=&quot;flex flex-col gap-3 card-surface p-4&quot;&gt;
+      &lt;div className=&quot;flex flex-col xl:flex-row gap-3&quot;&gt;
+      {/* Search — Design.md: pill inputs */}
+      &lt;div className=&quot;relative flex-1 min-w-0&quot;&gt;
+        &lt;Search className=&quot;absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]&quot; /&gt;
+        &lt;input type=&quot;text&quot; placeholder=&quot;Search transactions...&quot; className=&quot;w-full pl-11 pr-4 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] focus:ring-2 focus:ring-[#494fdf] transition-shadow text-sm outline-none placeholder:text-[var(--muted)]&quot; value={filters.search} onChange={e =&gt; dispatch({
+          type: &quot;SET_FILTER&quot;,
+          payload: {
+            search: e.target.value
+          }
+        })} /&gt;
+      &lt;/div&gt;
+
+      {/* Dropdowns — explicitly set background/color for mobile dark mode */}
+      &lt;div className=&quot;flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-2 w-full xl:w-auto&quot;&gt;
+        {
+          /* AG-Fix: select-name — Add a &lt;label&gt; or aria-label to &lt;select&gt; elements. */
+        }&lt;select className=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot; value={filters.type} onChange={e =&gt; dispatch({
+          type: &quot;SET_FILTER&quot;,
+          payload: {
+            type: e.target.value as any
+          }
+        })} aria-label=&quot;Select an option&quot;&gt;
+          &lt;option value=&quot;all&quot;&gt;All Types&lt;/option&gt;
+          &lt;option value=&quot;income&quot;&gt;Income&lt;/option&gt;
+          &lt;option value=&quot;expense&quot;&gt;Expense&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;select className=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot; value={filters.category} onChange={e =&gt; dispatch({
+          type: &quot;SET_FILTER&quot;,
+          payload: {
+            category: e.target.value
+          }
+        })}&gt;
+          &lt;option value=&quot;&quot;&gt;All Categories&lt;/option&gt;
+          {CATEGORIES.map(c =&gt; &lt;option key={c} value={c}&gt;
+              {c}
+            &lt;/option&gt;)}
+        &lt;/select&gt;
+
+        &lt;div className=&quot;flex gap-2 w-full sm:w-auto&quot;&gt;
+          &lt;button onClick={() =&gt; setShowAdvanced(!showAdvanced)} className={`flex-1 sm:flex-none px-4 py-3 rounded-[9999px] text-[13px] font-medium transition-colors flex items-center justify-center gap-2 ${showAdvanced ? &quot;bg-[#494fdf] text-white&quot; : &quot;bg-[var(--surface-alt)] text-[var(--foreground)] hover:bg-[var(--border)]&quot;}`} title=&quot;Toggle Advanced Filters&quot;&gt;
+            &lt;SlidersHorizontal className=&quot;w-4 h-4 shrink-0&quot; /&gt;
+            &lt;span className=&quot;sm:hidden lg:inline&quot;&gt;Advanced&lt;/span&gt;
+          &lt;/button&gt;
+
+          &lt;button onClick={() =&gt; dispatch({
+            type: &quot;RESET_FILTERS&quot;
+          })} className=&quot;p-3 w-[44px] h-[44px] bg-[var(--surface-alt)] hover:bg-[var(--border)] rounded-[9999px] transition-colors focus:ring-2 focus:ring-[#494fdf] outline-none flex items-center justify-center shrink-0 text-[var(--muted)] hover:text-[var(--foreground)]&quot; title=&quot;Reset Filters&quot;&gt;
+            &lt;X className=&quot;w-4 h-4 shrink-0&quot; /&gt;
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;/div&gt;
+
+      {/* Advanced Filters Panel */}
+      &lt;AnimatePresence&gt;
+        {showA</code></pre></div>
+        <div><div class="diff-label">After</div><pre><code>import { useState } from &quot;react&quot;;
+import { useAppContext } from &quot;@/context/AppContext&quot;;
+import { Search, SlidersHorizontal, Download, ChevronDown, ChevronUp, X } from &quot;lucide-react&quot;;
+import { CATEGORIES } from &quot;@/constants/categories&quot;;
+import { motion, AnimatePresence } from &quot;framer-motion&quot;;
+type TransactionFiltersProps = {
+  onExportCSV?: () =&gt; void;
+  onExportJSON?: () =&gt; void;
+};
+export function TransactionFilters({
+  onExportCSV,
+  onExportJSON
+}: TransactionFiltersProps) {
+  const {
+    state,
+    dispatch
+  } = useAppContext();
+  const {
+    filters
+  } = state;
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  return &lt;div className=&quot;flex flex-col gap-3 card-surface p-4&quot;&gt;
+      &lt;div className=&quot;flex flex-col xl:flex-row gap-3&quot;&gt;
+      {/* Search — Design.md: pill inputs */}
+      &lt;div className=&quot;relative flex-1 min-w-0&quot;&gt;
+        &lt;Search className=&quot;absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]&quot; /&gt;
+        &lt;input type=&quot;text&quot; placeholder=&quot;Search transactions...&quot; className=&quot;w-full pl-11 pr-4 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] focus:ring-2 focus:ring-[#494fdf] transition-shadow text-sm outline-none placeholder:text-[var(--muted)]&quot; value={filters.search} onChange={e =&gt; dispatch({
+          type: &quot;SET_FILTER&quot;,
+          payload: {
+            search: e.target.value
+          }
+        })} /&gt;
+      &lt;/div&gt;
+
+      {/* Dropdowns — explicitly set background/color for mobile dark mode */}
+      &lt;div className=&quot;flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-2 w-full xl:w-auto&quot;&gt;
+        {
+          /* AG-Fix: select-name — Add a &lt;label&gt; or aria-label to &lt;select&gt; elements. */
+        }&lt;select className=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot; value={filters.type} onChange={e =&gt; dispatch({
+          type: &quot;SET_FILTER&quot;,
+          payload: {
+            type: e.target.value as any
+          }
+        })} aria-label=&quot;Select an option&quot;&gt;
+          &lt;option value=&quot;all&quot;&gt;All Types&lt;/option&gt;
+          &lt;option value=&quot;income&quot;&gt;Income&lt;/option&gt;
+          &lt;option value=&quot;expense&quot;&gt;Expense&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;select className=&quot;flex-1 min-w-0 px-3 py-3 bg-[var(--surface-alt)] text-[var(--foreground)] border-none rounded-[9999px] text-[13px] font-medium focus:ring-2 focus:ring-[#494fdf] outline-none cursor-pointer filter-select&quot; value={filters.category} onChange={e =&gt; dispatch({
+          type: &quot;SET_FILTER&quot;,
+          payload: {
+            category: e.target.value
+          }
+        })}&gt;
+          &lt;option value=&quot;&quot;&gt;All Categories&lt;/option&gt;
+          {CATEGORIES.map(c =&gt; &lt;option key={c} value={c}&gt;
+              {c}
+            &lt;/option&gt;)}
+        &lt;/select&gt;
+
+        &lt;div className=&quot;flex gap-2 w-full sm:w-auto&quot;&gt;
+          &lt;button onClick={() =&gt; setShowAdvanced(!showAdvanced)} className={`flex-1 sm:flex-none px-4 py-3 rounded-[9999px] text-[13px] font-medium transition-colors flex items-center justify-center gap-2 ${showAdvanced ? &quot;bg-[#494fdf] text-white&quot; : &quot;bg-[var(--surface-alt)] text-[var(--foreground)] hover:bg-[var(--border)]&quot;}`} title=&quot;Toggle Advanced Filters&quot;&gt;
+            &lt;SlidersHorizontal className=&quot;w-4 h-4 shrink-0&quot; /&gt;
+            &lt;span className=&quot;sm:hidden lg:inline&quot;&gt;Advanced&lt;/span&gt;
+          &lt;/button&gt;
+
+          &lt;button onClick={() =&gt; dispatch({
+            type: &quot;RESET_FILTERS&quot;
+          })} className=&quot;p-3 w-[44px] h-[44px] bg-[var(--surface-alt)] hover:bg-[var(--border)] rounded-[9999px] transition-colors focus:ring-2 focus:ring-[#494fdf] outline-none flex items-center justify-center shrink-0 text-[var(--muted)] hover:text-[var(--foreground)]&quot; title=&quot;Reset Filters&quot;&gt;
+            &lt;X className=&quot;w-4 h-4 shrink-0&quot; /&gt;
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;/div&gt;
+
+      {/* Advanced Filters Panel */}
+      &lt;AnimatePresence&gt;
+        {showA</code></pre></div>
+      </div>
+    </details>
+  </section>
+</main>
+<footer>
+  Report ID: scan_1789753415765_b40ab0 · Scanned 2026-09-18T17:43:35.765Z · Target: https://financial-dashboard-rust-sigma.vercel.app/ · Generated by AccessibilityGuard Fix Agent
+</footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var html = document.documentElement;
+    html.setAttribute('data-theme', html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('#violations-table th[data-sort]').forEach(function (th) {
+    th.addEventListener('click', function () {
+      var idx = Number(th.getAttribute('data-sort'));
+      var tbody = document.querySelector('#violations-table tbody');
+      var rows = Array.from(tbody.querySelectorAll('tr'));
+      var asc = th.getAttribute('data-asc') !== 'true';
+      rows.sort(function (a, b) {
+        var av = a.children[idx].textContent.trim();
+        var bv = b.children[idx].textContent.trim();
+        return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+      rows.forEach(function (r) { tbody.appendChild(r); });
+      document.querySelectorAll('#violations-table th[data-sort]').forEach(function (h) { h.removeAttribute('data-asc'); });
+      th.setAttribute('data-asc', String(asc));
+    });
+  });
+</script>
+</body>
+</html>
