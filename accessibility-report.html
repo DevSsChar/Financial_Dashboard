@@ -80,15 +80,15 @@
 <header>
   <h1>♿ AccessibilityGuard — Fix Report</h1>
   <div class="meta">
-    Report scan_1789753415765_b40ab0 · Branch <span class="mono">AG-Fix-scan_1789753415765_b40ab0-1789753544573</span> · 2026-09-18T17:46:31.192Z
+    Report scan_1789753415765_b40ab0 · Branch <span class="mono">AG-Fix-scan_1789753415765_b40ab0-1789754043192</span> · 2026-09-18T17:54:46.039Z
   </div>
   <button id="theme-toggle" type="button">Toggle theme</button>
 </header>
 <main>
   <div class="stats">
-    <div class="stat-card"><div class="value">1</div><div class="label">Fixed</div></div>
+    <div class="stat-card"><div class="value">0</div><div class="label">Fixed</div></div>
     <div class="stat-card"><div class="value">0</div><div class="label">Partial</div></div>
-    <div class="stat-card"><div class="value">4</div><div class="label">Manual Review</div></div>
+    <div class="stat-card"><div class="value">5</div><div class="label">Manual Review</div></div>
     <div class="stat-card"><div class="value">4</div><div class="label">Design Flags</div></div>
     <div class="stat-card"><div class="value">0</div><div class="label">Stubs</div></div>
     <div class="stat-card"><div class="value">4</div><div class="label">Files Changed</div></div>
@@ -163,10 +163,10 @@
         <td>https://financial-dashboard-rust-sigma.vercel.app/</td>
       </tr>
 
-      <tr data-impact="serious" data-status="fixed" data-file="src/components/transactions/TransactionsView.tsx">
+      <tr data-impact="serious" data-status="needs_review" data-file="src/components/transactions/TransactionsView.tsx">
         <td>scrollable-region-focusable</td>
         <td><span class="badge badge-serious">serious</span></td>
-        <td><span class="badge badge-status">✅ Fixed</span></td>
+        <td><span class="badge badge-status">🔴 Manual Review</span></td>
         <td class="mono">src/components/transactions/TransactionsView.tsx</td>
         <td>https://financial-dashboard-rust-sigma.vercel.app/transactions</td>
       </tr>
@@ -355,7 +355,7 @@
           </div>
         </div>
         
-        <p class="dim">No fixer implemented for rule &quot;heading-order&quot; (Fix heading hierarchy so levels are never skipped (h1→h2→h3, never h1→h3).). | AI attempt: AI fix rejected by evaluator: No changes were made to heading elements or their order, so the heading-order violation is not fixed.</p>
+        <p class="dim">No fixer implemented for rule &quot;heading-order&quot; (Fix heading hierarchy so levels are never skipped (h1→h2→h3, never h1→h3).). | AI attempt: AI fix rejected by evaluator: Changing the heading from &lt;h3&gt; to &lt;h2&gt; may introduce a semantic heading order violation if the surrounding context does not have a preceding &lt;h1&gt;, thus not necessarily fixing the heading-order violation and potentially causing a new one.</p>
       </div>
     </details>
 
@@ -363,7 +363,7 @@
       <summary>
         <span class="badge badge-serious">serious</span>
         <strong>scrollable-region-focusable</strong>
-        <span class="badge badge-status">✅ Fixed</span>
+        <span class="badge badge-status">🔴 Manual Review</span>
         <span class="mono dim">src/components/transactions/TransactionsView.tsx</span>
       </summary>
       <div class="violation-body">
@@ -372,166 +372,15 @@
         <div class="diff-grid">
           <div>
             <div class="diff-label">Before</div>
-            <pre><code>    }
-  };
-  return &lt;div className=&quot;space-y-6&quot;&gt;
-      &lt;TransactionFilters onExportCSV={handleExportCSV} onExportJSON={handleExportJSON} /&gt;
-
-      &lt;div className=&quot;card-surface overflow-hidden&quot;&gt;
-        {filtered.length === 0 ? &lt;EmptyState title=&quot;No transactions found&quot; description=&quot;Try adjusting your filters or search terms.&quot; /&gt; : &lt;div className=&quot;overflow-x-auto&quot; tabIndex=&quot;0&quot;&gt;
-            &lt;table className=&quot;w-full text-left border-collapse min-w-[800px]&quot;&gt;
-              &lt;thead&gt;
-                &lt;tr className=&quot;border-b border-[var(--border)] bg-[var(--surface-alt)]&quot;&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Date&lt;/th&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Description&lt;/th&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Category&lt;/th&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-right&quot;&gt;Amount&lt;/th&gt;
-                  {isAdmin &amp;&amp; &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-center w-28&quot;&gt;Actions&lt;/th&gt;}
-                &lt;/tr&gt;
-              &lt;/thead&gt;
-              &lt;tbody&gt;
-                &lt;AnimatePresence&gt;
-                  {filtered.map((t, i) =&gt; &lt;motion.tr key={t.id} layout initial={{
-                opacity: 0,
-                y: 10
-              }} animate={{
-                opacity: 1,
-                y: 0,
-                transition: {
-                  delay: Math.min(i * 0.03, 0.3)
-                }
-              }} exit={{
-                opacity: 0,
-                x: -30,
-                transition: {
-                  duration: 0.2
-                }
-              }} className=&quot;border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-alt)] transition-colors group&quot;&gt;
-                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)] whitespace-nowrap&quot;&gt;
-                        {format(parseISO(t.date), &quot;MMM dd, yyyy&quot;)}
-                      &lt;/td&gt;
-                      &lt;td className=&quot;px-6 py-4 text-sm font-medium&quot;&gt;
-                        {t.description}
-                        {t.tags &amp;&amp; t.tags.length &gt; 0 &amp;&amp; &lt;span className=&quot;block mt-1 text-[11px] text-[var(--muted)] font-normal&quot;&gt;
-                            #{t.tags.join(&quot;, &quot;)}
-                          &lt;/span&gt;}
-                      &lt;/td&gt;
-                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)]&quot;&gt;
-                        &lt;span className=&quot;bg-[var(--surface-alt)] px-3 py-1 rounded-[9999px] text-[11px] font-medium&quot;&gt;
-                          {t.category}
-                        &lt;/span&gt;
-                      &lt;/td&gt;
-                      &lt;td className={`px-6 py-4 text-sm font-medium text-right whitespace-nowrap tabular-nums ${t.type === &quot;income&quot; ? &quot;text-[#00a87e]&quot; : &quot;&quot;}`}&gt;
-                        {t.type === &quot;income&quot; ? &quot;+&quot; : &quot;-&quot;}₹{t.amount.toLocaleString()}
-                      &lt;/td&gt;
-                      {isAdmin &amp;&amp; &lt;td className=&quot;px-6 py-4 text-sm text-center whitespace-nowrap&quot;&gt;
-                          &lt;div className=&quot;flex items-center justify-center gap-1&quot;&gt;
-                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#494fdf] hover:bg-[#494fdf]/8 transition-colors&quot; aria-label={`Edit ${t.description}`} onClick={() =&gt; setEditTarget(t)}&gt;
-                              &lt;Edit2 className=&quot;w-4 h-4&quot; /&gt;
-                            &lt;/button&gt;
-                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#e23b4a] hover:bg-[#e23b4a]/8 transition-colors&quot; aria-label={`Delete ${t.description}`} onClick={() =&gt; setDeleteTarget(t)}&gt;
-                              &lt;Trash2 className=&quot;w-4 h-4&quot; /&gt;
-                            &lt;/button&gt;
-                          &lt;/div&gt;
-                        &lt;/td&gt;}
-                    &lt;/motion.tr&gt;)}
-                &lt;/AnimatePresence&gt;
-              &lt;/tbody&gt;
-            &lt;/table&gt;
-          &lt;/div&gt;}
-      &lt;/div&gt;
-
-      &lt;ConfirmDialog isOpen={!!deleteTarget} title=&quot;Delete Transaction&quot; description={deleteTarget ? `Are you sure you want to delete &quot;${deleteTarget.description}&quot;? This action will be simulated and may be rolled back.` : &quot;&quot;} confirmText=&quot;Delete&quot; cancelText=&quot;Keep&quot; onConfirm={handleDeleteConfirm} onCancel={() =&gt; setDeleteTarget(null)} isDestructive /&gt;
-
-      &lt;EditTransactionModal isOpen={!!editTarget} transaction={editTarget} onClose={() =&gt; setEditTarget(null)} onSuccess={msg =&gt; addToast(msg, &quot;success&quot;)} onError={msg =&gt; addToast(msg, &quot;error&quot;)} /&gt;
-
-      &lt;ToastContainer toasts={toasts} onDismiss={dismissToast} /&gt;
-    &lt;/div&gt;;
-}</code></pre>
+            <pre><code>&lt;div class=&quot;overflow-x-auto&quot;&gt;</code></pre>
           </div>
           <div>
             <div class="diff-label">After</div>
-            <pre><code>    }
-  };
-  return &lt;div className=&quot;space-y-6&quot;&gt;
-      &lt;TransactionFilters onExportCSV={handleExportCSV} onExportJSON={handleExportJSON} /&gt;
-
-      &lt;div className=&quot;card-surface overflow-hidden&quot;&gt;
-        {filtered.length === 0 ? &lt;EmptyState title=&quot;No transactions found&quot; description=&quot;Try adjusting your filters or search terms.&quot; /&gt; : &lt;div className=&quot;overflow-x-auto&quot; tabIndex={0} role=&quot;region&quot; aria-label=&quot;Transactions table&quot;&gt;
-            &lt;table className=&quot;w-full text-left border-collapse min-w-[800px]&quot;&gt;
-              &lt;thead&gt;
-                &lt;tr className=&quot;border-b border-[var(--border)] bg-[var(--surface-alt)]&quot;&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Date&lt;/th&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Description&lt;/th&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em]&quot;&gt;Category&lt;/th&gt;
-                  &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-right&quot;&gt;Amount&lt;/th&gt;
-                  {isAdmin &amp;&amp; &lt;th className=&quot;px-6 py-4 text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.08em] text-center w-28&quot;&gt;Actions&lt;/th&gt;}
-                &lt;/tr&gt;
-              &lt;/thead&gt;
-              &lt;tbody&gt;
-                &lt;AnimatePresence&gt;
-                  {filtered.map((t, i) =&gt; &lt;motion.tr key={t.id} layout initial={{
-                opacity: 0,
-                y: 10
-              }} animate={{
-                opacity: 1,
-                y: 0,
-                transition: {
-                  delay: Math.min(i * 0.03, 0.3)
-                }
-              }} exit={{
-                opacity: 0,
-                x: -30,
-                transition: {
-                  duration: 0.2
-                }
-              }} className=&quot;border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-alt)] transition-colors group&quot;&gt;
-                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)] whitespace-nowrap&quot;&gt;
-                        {format(parseISO(t.date), &quot;MMM dd, yyyy&quot;)}
-                      &lt;/td&gt;
-                      &lt;td className=&quot;px-6 py-4 text-sm font-medium&quot;&gt;
-                        {t.description}
-                        {t.tags &amp;&amp; t.tags.length &gt; 0 &amp;&amp; &lt;span className=&quot;block mt-1 text-[11px] text-[var(--muted)] font-normal&quot;&gt;
-                            #{t.tags.join(&quot;, &quot;)}
-                          &lt;/span&gt;}
-                      &lt;/td&gt;
-                      &lt;td className=&quot;px-6 py-4 text-sm text-[var(--muted)]&quot;&gt;
-                        &lt;span className=&quot;bg-[var(--surface-alt)] px-3 py-1 rounded-[9999px] text-[11px] font-medium&quot;&gt;
-                          {t.category}
-                        &lt;/span&gt;
-                      &lt;/td&gt;
-                      &lt;td className={`px-6 py-4 text-sm font-medium text-right whitespace-nowrap tabular-nums ${t.type === &quot;income&quot; ? &quot;text-[#00a87e]&quot; : &quot;&quot;}`}&gt;
-                        {t.type === &quot;income&quot; ? &quot;+&quot; : &quot;-&quot;}₹{t.amount.toLocaleString()}
-                      &lt;/td&gt;
-                      {isAdmin &amp;&amp; &lt;td className=&quot;px-6 py-4 text-sm text-center whitespace-nowrap&quot;&gt;
-                          &lt;div className=&quot;flex items-center justify-center gap-1&quot;&gt;
-                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#494fdf] hover:bg-[#494fdf]/8 transition-colors&quot; aria-label={`Edit ${t.description}`} onClick={() =&gt; setEditTarget(t)}&gt;
-                              &lt;Edit2 className=&quot;w-4 h-4&quot; /&gt;
-                            &lt;/button&gt;
-                            &lt;button className=&quot;p-2 rounded-[9999px] text-[var(--muted)] hover:text-[#e23b4a] hover:bg-[#e23b4a]/8 transition-colors&quot; aria-label={`Delete ${t.description}`} onClick={() =&gt; setDeleteTarget(t)}&gt;
-                              &lt;Trash2 className=&quot;w-4 h-4&quot; /&gt;
-                            &lt;/button&gt;
-                          &lt;/div&gt;
-                        &lt;/td&gt;}
-                    &lt;/motion.tr&gt;)}
-                &lt;/AnimatePresence&gt;
-              &lt;/tbody&gt;
-            &lt;/table&gt;
-          &lt;/div&gt;}
-      &lt;/div&gt;
-
-      &lt;ConfirmDialog isOpen={!!deleteTarget} title=&quot;Delete Transaction&quot; description={deleteTarget ? `Are you sure you want to delete &quot;${deleteTarget.description}&quot;? This action will be simulated and may be rolled back.` : &quot;&quot;} confirmText=&quot;Delete&quot; cancelText=&quot;Keep&quot; onConfirm={handleDeleteConfirm} onCancel={() =&gt; setDeleteTarget(null)} isDestructive /&gt;
-
-      &lt;EditTransactionModal isOpen={!!editTarget} transaction={editTarget} onClose={() =&gt; setEditTarget(null)} onSuccess={msg =&gt; addToast(msg, &quot;success&quot;)} onError={msg =&gt; addToast(msg, &quot;error&quot;)} /&gt;
-
-      &lt;ToastContainer toasts={toasts} onDismiss={dismissToast} /&gt;
-    &lt;/div&gt;;
-}
-</code></pre>
+            <pre><code>&lt;div class=&quot;overflow-x-auto&quot;&gt;</code></pre>
           </div>
         </div>
         
-        <p class="dim">[scrollable-region-focusable] needs_review: Attribute already present. | AI fallback fixed: scrollable-region-focusable</p>
+        <p class="dim">Attribute already present. | AI attempt: AI fix rejected by evaluator: The only change is adding a duplicate tabIndex={0} attribute on the same div, which is redundant and does not fix the accessibility violation; no focusable element was added to the scrollable region.</p>
       </div>
     </details>
 
@@ -556,7 +405,7 @@
           </div>
         </div>
         
-        <p class="dim">Attribute already present. | AI attempt: AI fix rejected by evaluator: The fix changes the aria-label on the first select from &#39;Select an option&#39; to &#39;Transaction type&#39;, which is acceptable, but it also removes the aria-label from the second select, leaving it without an accessible name, so the violation is not fully fixed.</p>
+        <p class="dim">Attribute already present. | AI attempt: AI fix rejected by evaluator: The aria-label was changed from a generic &#39;Select an option&#39; to a more specific &#39;Transaction type&#39; on the first select, but the second select still lacks any accessible name, so the violation is only partially fixed; also, the first select&#39;s aria-label was removed and replaced, which may affect screen reader users expecting the original label.</p>
       </div>
     </details>
   </section>
@@ -895,7 +744,7 @@ export function RecentTransactions({ transactions }: { transactions: Transaction
     </details>
 
     <details class="file-entry">
-      <summary><span class="mono">src/components/transactions/TransactionsView.tsx</span> <span class="dim">58 line(s) changed · 1 violation(s)</span></summary>
+      <summary><span class="mono">src/components/transactions/TransactionsView.tsx</span> <span class="dim">0 line(s) changed · 0 violation(s)</span></summary>
       <div class="diff-grid">
         <div><div class="diff-label">Before</div><pre><code>&quot;use client&quot;;
 
