@@ -113,7 +113,7 @@ export function TransactionsView() {
       <TransactionFilters onExportCSV={handleExportCSV} onExportJSON={handleExportJSON} />
 
       <div className="card-surface overflow-hidden">
-        {filtered.length === 0 ? <EmptyState title="No transactions found" description="Try adjusting your filters or search terms." /> : <div className="overflow-x-auto" tabIndex="0">
+        {filtered.length === 0 ? <EmptyState title="No transactions found" description="Try adjusting your filters or search terms." /> : <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Transactions table">
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--surface-alt)]">
